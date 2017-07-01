@@ -1,11 +1,12 @@
 ## Relit
 
-
-Diffuse Colors 
+##### Diffuse Colors
 <img src="http://francoislaberge.com/relit/texture/monkey-diffuse.png"/>
-+ Normal Maps
+
+##### + Normal Maps
 <img src="http://francoislaberge.com/relit/texture/monkey-normals.png"/>
-= Dynamically relit monkey
+
+##### = Dynamically relit monkey
 <img src="http://francoislaberge.com/relit/texture/monkey-final.png"/>
 
 ### Usage
