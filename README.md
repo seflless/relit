@@ -1,5 +1,9 @@
 ## Reflash
 
+
+<img src="http://francoislaberge.com/reflash/texture/monkey-normals.png"/>
+<img src="http://francoislaberge.com/reflash/texture/monkey-diffuse.png"/>
+
 ### Usage
 
 ```
