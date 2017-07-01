@@ -2,9 +2,11 @@
 
 ##### Diffuse Colors
 <img src="http://francoislaberge.com/reflash/texture/monkey-diffuse.png"/>
-##### Plus Normal Maps
+
+##### + Normal Maps
 <img src="http://francoislaberge.com/reflash/texture/monkey-normals.png"/>
-##### Equals Dynamically relit monkey
+
+##### = Dynamically relit monkey
 <img src="http://francoislaberge.com/reflash/texture/monkey-final.png"/>
 
 ### Usage
