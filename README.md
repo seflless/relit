@@ -1,5 +1,5 @@
 ## Relit
-An NPM module to use WebGL to relight photos and images using normal maps.
+Relight photos and images using normal maps. Implmented using WebGL.
 
 <img src="http://francoislaberge.com/relit/texture/monkey-diffuse.png"/> **+** 
 <img src="http://francoislaberge.com/relit/texture/monkey-normals.png"/> **=** 
