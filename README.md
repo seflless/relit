@@ -1,5 +1,5 @@
 ## Relit
-Relight photos and images using normal maps. Implmented using WebGL.
+Relight photos and images using normal maps.
 
 <img src="http://francoislaberge.com/relit/texture/monkey-diffuse.png"/> **+** 
 <img src="http://francoislaberge.com/relit/texture/monkey-normals.png"/> **=** 
