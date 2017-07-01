@@ -1,4 +1,5 @@
 ## Relit
+Use WebGL to dynamically relight photos and images using normal maps.
 
 <img src="http://francoislaberge.com/relit/texture/monkey-diffuse.png"/> **+** 
 <img src="http://francoislaberge.com/relit/texture/monkey-normals.png"/> **=** 
