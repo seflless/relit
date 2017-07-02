@@ -167,8 +167,20 @@ function init()
     imgNormals.onload = function() { onLoadedTexture(texNormals, imgNormals, gl.RGB); };
     imgNormals.onerror = function() { alert("failed to load normalmap texture."); };
     //  Set the img srcs AFTER the callbacks are assigned!
-    imgDiffuse.src = 'texture/monkey-diffuse.png';
-    imgNormals.src = 'texture/monkey-normals.png';
+
+    
+
+    const texturesPaths = [
+        'couple',
+        'head',
+        'statue-large',
+        'earth',
+        'monkey'
+    ];
+    const currentTexture =texturesPaths[2];
+
+    imgDiffuse.src = `texture/${currentTexture}-diffuse.png`;
+    imgNormals.src = `texture/${currentTexture}-normals.png`;
     //  Exiting for now. Execution resumes in onLoadedTexture when textures load.
 }
 
@@ -201,7 +213,7 @@ function startApp()
     gl.disable(gl.DEPTH_TEST);
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.clearColor(0.0, 0.0, 0.0, 0.0);
     gl.viewport(0, 0, canvas.width, canvas.height);
 
     //  Create a SpriteBatch
@@ -237,7 +249,15 @@ function startApp()
 
     //  Watch for mouse/finger movement
     canvas.addEventListener('mousemove', function(e) {
-        doCursorMove( e.clientX - canvasPos.x, e.clientY - canvasPos.y );
+        doCursorMove( e.clientX - canvasPos.x, e.clientY - canvasPos.y, e.buttons===1 );
+        e.preventDefault();
+    });
+    canvas.addEventListener('mouseup', function(e) {
+        doCursorMove( e.clientX - canvasPos.x, e.clientY - canvasPos.y, e.buttons===1 );
+        e.preventDefault();
+    });
+    canvas.addEventListener('mousedown', function(e) {
+        doCursorMove( e.clientX - canvasPos.x, e.clientY - canvasPos.y, e.buttons===1 );
         e.preventDefault();
     });
     canvas.addEventListener('touchmove', function(e) {
@@ -260,26 +280,44 @@ function startApp()
  *  Mouse move handler.
  *  Set light direction based on mouse position
  */
-function doCursorMove( x, y )
+function doCursorMove( x, y, reverseZ )
 {
-    var dx = x - canvas.width / 2.0,
+    var radius = canvas.width / 2.0,
+        dx = x - canvas.width / 2.0,
         dy = -(y - canvas.height / 2.0),
-        len = Math.sqrt(dx * dx + dy * dy);
+        // Pretend the mouse is intersecting a sphere, it's height would be 
+        // where the mouse intersects the sphere
+        distance2D = Math.sqrt(dx * dx + dy * dy);
+
+    if ( distance2D > radius ) {
+        distance2D = radius;
+    }  
+    var dz = Math.sin( 
+                            Math.PI / 2.0 *
+                            (radius - distance2D )/radius
+                        ) * radius;
+
+    var len = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        /*,
+        dz = 
+        len = */
     if( len > 0.0 )
     {
         // normalize xy
         var s = 1.0 / len;
         dx *= s;
         dy *= s;
+        dz *= s;
     }
     else
     {
         dx = 1.0;
         dy = 0.0;
+        dz = 0.0;
     }
     lightDir[0] = dx;
-    lightDir[1] = dy;
-    lightDir[2] = 0.0;
+    lightDir[1] = -dy;
+    lightDir[2] = reverseZ ? -dz: dz;
 }
 
 /**
