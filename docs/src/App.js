@@ -171,13 +171,15 @@ function init()
     
 
     const texturesPaths = [
-        'couple',
-        'head',
-        'statue-large',
-        'earth',
-        'monkey'
+        'couple',       // 0
+        'head',         // 1
+        'statue-large', // 2
+        'earth',        // 3
+        'monkey',       // 4
+        'beth',         // 5
+        'me',           // 6
     ];
-    const currentTexture =texturesPaths[2];
+    const currentTexture = texturesPaths[2];
 
     imgDiffuse.src = `texture/${currentTexture}-diffuse.png`;
     imgNormals.src = `texture/${currentTexture}-normals.png`;
