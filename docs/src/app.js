@@ -51,7 +51,11 @@ function compileShader( sh, src )
     return sh;
 }
 
-function getShaderById( id )
+/*
+ * {src} Source code of the shader.
+ * {shaderType} Enumeration of either 'VertexShader' or 'FragmentShader'
+ */
+function createShader( src, shaderType )
 {
     var shaderScript = El(id);
     if( !shaderScript )
@@ -123,7 +127,9 @@ function init()
     canvasPos.y = rc.top;
 
     // Compile shader scripts...
-    if( !(shader.prog = makeShaderProgram( getShaderById('nmap-vert'), getShaderById('nmap-frag'))) )
+    const vertexShader = compileShader( gl.createShader(gl.VERTEX_SHADER), vertexShaderSource );
+    const fragmentShader = compileShader( gl.createShader(gl.FRAGMENT_SHADER), fragmentShaderSource );
+    if( !(shader.prog = makeShaderProgram( vertexShader, fragmentShader ) ) )
     {
         alert("Failed to create shader program. Check console for errors.");
         return;
@@ -213,25 +219,21 @@ function startApp()
     //  Fill an array of monkeys, each with its own sprite instance
     monkeys = [];
 
-    for( x = -16.0; x <= 16.0; x += 2.0 )
-    {
-        for( y = -12.0; y <= 12.0; y += 2.0 )
-        {
-            // Add a sprite to the batch
-            sprite = new Sprite({
-                x:x, y:y, rot:0,
-                quad:quad
-            });
-            batch.addSprite(sprite);
+    
+    // Add a sprite to the batch
+    sprite = new Sprite({
+        x:0,y:0, rot:0,
+        quad:quad
+    });
+    batch.addSprite(sprite);
 
-            // Make an ad-hoc monkey object
-            monkey = {
-                sprite:sprite,
-                rotVel:0//Math.random() * 4.0 - 2.0  // random rotational velocity
-            };
-            monkeys.push(monkey);
-        }
-    }
+    // Make an ad-hoc monkey object
+    monkey = {
+        sprite:sprite,
+        rotVel:0//Math.random() * 4.0 - 2.0  // random rotational velocity
+    };
+    monkeys.push(monkey);
+
 
     //  Watch for mouse/finger movement
     canvas.addEventListener('mousemove', function(e) {
@@ -277,7 +279,7 @@ function doCursorMove( x, y )
     }
     lightDir[0] = dx;
     lightDir[1] = dy;
-    //lightDir[2] = 0.0;
+    lightDir[2] = 0.0;
 }
 
 /**

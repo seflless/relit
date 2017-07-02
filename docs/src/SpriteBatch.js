@@ -60,8 +60,10 @@ window.SpriteBatch = function( info )
 	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.arr_id, gl.STATIC_DRAW);
 
 	//  Initial uniform values
-	gl.uniform1f(this.shader.uniforms.sceneWidth, 16.0);
-	gl.uniform1f(this.shader.uniforms.sceneHeight, 12.0);
+	const width = 2.0;
+	const height = 2.0;
+	gl.uniform1f(this.shader.uniforms.sceneWidth, width);
+	gl.uniform1f(this.shader.uniforms.sceneHeight, height);
 	gl.uniform1f(this.shader.uniforms.aspect, canvas.width / canvas.height);
 	gl.uniform3fv(this.shader.uniforms.lightDir, lightDir);
 	gl.uniform3fv(this.shader.uniforms.lightColor, new Float32Array([0.8, 0.8, 0.8]));
