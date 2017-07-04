@@ -177,7 +177,7 @@ function init()
         'me',           // 4
         'cereal'        // 5
     ];
-    const currentTexture = texturesPaths[5];
+    const currentTexture = texturesPaths[2];
 
     imgDiffuse.src = `texture/${currentTexture}-diffuse.png`;
     imgNormals.src = `texture/${currentTexture}-normals.png`;
