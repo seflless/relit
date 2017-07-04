@@ -67,7 +67,7 @@ window.SpriteBatch = function( info )
 	gl.uniform1f(this.shader.uniforms.aspect, canvas.width / canvas.height);
 	gl.uniform3fv(this.shader.uniforms.lightDir, lightDir);
 	gl.uniform3fv(this.shader.uniforms.lightColor, new Float32Array([1.0, 1.0, 1.0]));
-	gl.uniform3fv(this.shader.uniforms.ambientColor, new Float32Array([0.0, 0.0, 0.0]));
+	gl.uniform3fv(this.shader.uniforms.ambientColor, new Float32Array([0.0, 0.0, 0.2]));
 
 	var e = gl.getError();
 	if( e !== gl.NO_ERROR )
