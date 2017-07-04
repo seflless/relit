@@ -172,7 +172,7 @@ function init()
     const texturesPaths = [
         'couple',       // 0
         'head',         // 1
-        'statue-large', // 2
+        'statue',       // 2
         'earth',        // 3
         'me',           // 4
         'cereal'        // 5
