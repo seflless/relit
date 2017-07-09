@@ -175,7 +175,9 @@ function init()
         'statue',       // 2
         'earth',        // 3
         'me',           // 4
-        'cereal'        // 5
+        'cereal',       // 5
+        'bricks',       // 6
+        'suit'          // 7
     ];
     const currentTexture = texturesPaths[2];
 
@@ -316,7 +318,7 @@ function doCursorMove( x, y, reverseZ )
         dz = 0.0;
     }
     lightDir[0] = dx;
-    lightDir[1] = -dy;
+    lightDir[1] = dy;
     lightDir[2] = reverseZ ? -dz: dz;
 }
 
