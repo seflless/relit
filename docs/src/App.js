@@ -177,7 +177,8 @@ function init()
         'me',           // 4
         'cereal',       // 5
         'bricks',       // 6
-        'suit'          // 7
+        'suit',         // 7
+        'reference'     // 8
     ];
     const currentTexture = texturesPaths[2];
 

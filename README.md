@@ -5,7 +5,9 @@ Relight photos and images using normal maps.
 <img src="http://francoislaberge.com/relit/texture/monkey-normals.png"/> **=** 
 <img src="http://francoislaberge.com/relit/texture/monkey-final.png"/>
 
-[Basic Demo](http://francoislaberge.com/relit/)
+**Demos**
+ - [Basic Demo](http://francoislaberge.com/relit/)
+ - [Spherical Reference Textures](http://francoislaberge.com/relit/examples/reference-sphere/)
 
 ### Usage
 

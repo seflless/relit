@@ -6,19 +6,37 @@
         html{
             width: 100%;
             height: 100%;
-        }
-        body {
-            margin: 0px;
             display: flex;
             justify-content: center;
-            align-items: center;
-            width: 100%;
-            height: 100%;
+        }
+        body {
+            background-image: linear-gradient(45deg, #d0d0d0 25%, transparent 25%), linear-gradient(-45deg, #d0d0d0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #d0d0d0 75%), linear-gradient(-45deg, transparent 75%, #d0d0d0 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+
+            margin: 0px;
+        }
+        p, h3{
+            background-color: white;
+            margin: 3px;
+            padding: 10px;
+            text-align: center;
+        }
+        a{
+            display: block;
         }
     </style>  
 </head>
 <body>	
-	<canvas id="canvas"></canvas>
+    <p>Click each texture to download as a PNG</p>
+    <h3>Normals Texture</h3>
+    <a download="normals.png">
+	    <canvas id="normals-canvas"></canvas>
+    </a>
+    <h3>Diffuse Texture</h3>
+    <a download="diffuse.png">
+        <canvas id="diffuse-canvas"></canvas>
+    </a>
 	<script src="reference.js"></script>
 </body>
 </html>
