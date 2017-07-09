@@ -1,8 +1,8 @@
 ## Relit
 Relight photos and images using normal maps.
 
-<img src="http://francoislaberge.com/relit/texture/monkey-diffuse.png"/> **+** 
-<img src="http://francoislaberge.com/relit/texture/monkey-normals.png"/> **=** 
+<img src="http://francoislaberge.com/relit/texture/statue-diffuse.png"/> **+** 
+<img src="http://francoislaberge.com/relit/texture/statue-normals.png"/> **=** 
 <img src="http://francoislaberge.com/relit/texture/monkey-final.png"/>
 
 **Demos**
