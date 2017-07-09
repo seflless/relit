@@ -3,7 +3,7 @@ Relight photos and images using normal maps.
 
 <img width="25%" src="http://francoislaberge.com/relit/texture/statue-diffuse.png"/> **+** 
 <img width="25%" src="http://francoislaberge.com/relit/texture/statue-normals.png"/> **=** 
-<img width="25%" src="http://francoislaberge.com/relit/texture/monkey-final.png"/>
+<img width="25%" src="http://francoislaberge.com/relit/texture/statue-final.png"/>
 
 **Demos**
  - [Basic Demo](http://francoislaberge.com/relit/)
