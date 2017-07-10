@@ -59,7 +59,7 @@ const navigation = document.getElementById('navigation');
 textures.forEach( (texture) => {
     let a = document.createElement('a');
 
-    a.href = `http://${location.host + location.pathname}/?texture=${texture}`;
+    a.href = `http://${location.host + location.pathname}?texture=${texture}`;
     a.innerHTML = `<img class="thumbnail" src="texture/${texture}-diffuse.png"/>`;
     navigation.appendChild(a);
 })
