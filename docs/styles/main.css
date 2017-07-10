@@ -13,3 +13,8 @@ a {
 a:hover {
     color:#DEF
 }
+
+.thumbnail{
+    width: 64px;
+    height: 64px;
+}

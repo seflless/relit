@@ -17,18 +17,52 @@ var monkeys = [];			// will be an array of monkey sprites to render
 var prevT = 0;				// previous frame timestamp (millisecs)
 var lightDir = new Float32Array([0.7, 0.7, 0.7]);	// direction of light (update by mouse movements)
 
-const texturesPaths = [
-        'couple',       // 0
-        'head',         // 1
-        'statue',       // 2
-        'earth',        // 3
-        'me',           // 4
-        'cereal',       // 5
-        'bricks',       // 6
-        'suit',         // 7
-        'reference'     // 8
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+const textures = [
+        'statue',
+        'couple',
+        'head',
+        'earth',
+        'me',
+        'cereal',
+        'bricks',
+        'suit',     
+        'reference'     
     ];
-const currentTexture = texturesPaths[2];
+let currentTexture;
+let texture = getParameterByName('texture');
+
+if( texture !== null ) {
+    const textureIndex = textures.findIndex( (_texture) => _texture === texture );
+    if(textureIndex !== -1 ){
+        currentTexture = textures[textureIndex];
+    } else {
+        // Default to statue if there was no texture with the name that was specified
+        currentTexture = textures.find( (texture) => _texture === "statue" );
+    }
+} else {
+    // Default to statue if no texture was specified via the get parameter
+    currentTexture = textures.find( (texture) => texture === "statue" );
+}
+
+const navigation = document.getElementById('navigation');
+
+textures.forEach( (texture) => {
+    let a = document.createElement('a');
+
+    a.href = `http://${window.location.host}/?texture=${texture}`;
+    a.innerHTML = `<img class="thumbnail" src="texture/${texture}-diffuse.png"/>`;
+    navigation.appendChild(a);
+})
 
 //
 //  Utility/helper functions
@@ -362,3 +396,4 @@ function update( dt )
 }
 
 init();
+
