@@ -28,7 +28,7 @@ const texturesPaths = [
         'suit',         // 7
         'reference'     // 8
     ];
-const currentTexture = texturesPaths[3];
+const currentTexture = texturesPaths[2];
 
 //
 //  Utility/helper functions
