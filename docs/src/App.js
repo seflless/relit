@@ -17,6 +17,19 @@ var monkeys = [];			// will be an array of monkey sprites to render
 var prevT = 0;				// previous frame timestamp (millisecs)
 var lightDir = new Float32Array([0.7, 0.7, 0.7]);	// direction of light (update by mouse movements)
 
+const texturesPaths = [
+        'couple',       // 0
+        'head',         // 1
+        'statue',       // 2
+        'earth',        // 3
+        'me',           // 4
+        'cereal',       // 5
+        'bricks',       // 6
+        'suit',         // 7
+        'reference'     // 8
+    ];
+const currentTexture = texturesPaths[3];
+
 //
 //  Utility/helper functions
 //
@@ -166,21 +179,7 @@ function init()
     imgDiffuse.onerror = function() { alert("failed to load diffuse texture."); };
     imgNormals.onload = function() { onLoadedTexture(texNormals, imgNormals, gl.RGB); };
     imgNormals.onerror = function() { alert("failed to load normalmap texture."); };
-    //  Set the img srcs AFTER the callbacks are assigned!
-
-    
-    const texturesPaths = [
-        'couple',       // 0
-        'head',         // 1
-        'statue',       // 2
-        'earth',        // 3
-        'me',           // 4
-        'cereal',       // 5
-        'bricks',       // 6
-        'suit',         // 7
-        'reference'     // 8
-    ];
-    const currentTexture = texturesPaths[2];
+    //  Set the img srcs AFTER the callbacks are assigned!    
 
     imgDiffuse.src = `texture/${currentTexture}-diffuse.png`;
     imgNormals.src = `texture/${currentTexture}-normals.png`;

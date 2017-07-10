@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Reference Sphere</title>  
+	<title>Normal Map Converter</title>
     <style>
         html{
             width: 100%;
@@ -20,7 +20,7 @@
             background-color: white;
             margin: 3px;
             padding: 10px;
-            text-align: center;
+           
         }
         a{
             display: block;
@@ -28,16 +28,12 @@
     </style>  
 </head>
 <body>	
-    <p>Click each texture to download as a PNG</p>
-    <h3>Normals Texture</h3>
-    <a download="normals.png">
-	    <canvas id="normals-canvas"></canvas>
+    <p>1) Drag and drop normal map images into the box below.</p> 
+    <p>2) Click on the box after to download the transformed normal file</p>
+    <a id="download" download="normals.png">
+	    <canvas id="canvas"></canvas>
     </a>
-    <h3>Diffuse Texture</h3>
-    <a download="diffuse.png">
-        <canvas id="diffuse-canvas"></canvas>
-    </a>
-    <script src="../common/conversion.js"></script>
-	<script src="index.js"></script>
+    <script src="../common/conversion.js" type="text/javascript"></script>
+	<script src="index.js" type="text/javascript"></script>
 </body>
 </html>

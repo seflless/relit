@@ -112,16 +112,19 @@ function getNormalAsColor( x, y, reverseZ ) {
         normal[2] = -normal[2];
     }
 
+    let color;
     if( normal[0] === 0.0 && normal[1] === 0.0 && normal[0] === 0.0 ){
-        return [128, 128, 128, 255];
+        color = toColor( [ 0.0, 0.0, 0.0 ] )
     } else {
-        return [
-            Math.floor( (normal[0] + 1.0) / 2.0 * 255 ),
-            Math.floor( (normal[1] + 1.0) / 2.0 * 255 ),
-            Math.floor( (normal[2] + 1.0) / 2.0 * 255 ),
-             255
-        ];
+        color = toColor(normal);    
     }
+
+    return [
+        color[0],
+        color[1],
+        color[2],
+        255
+    ];
 }
 
 /* 

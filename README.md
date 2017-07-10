@@ -6,7 +6,7 @@ Relight photos and images using normal maps.
 <img width="25%" src="http://francoislaberge.com/relit/texture/statue-final.png"/>
 
 **Demos**
- - [Basic Demo](http://francoislaberge.com/relit/)
+ - [Statue](http://francoislaberge.com/relit/)
  - [Spherical Reference Textures](http://francoislaberge.com/relit/examples/reference-sphere/)
 
 ### Usage
@@ -20,7 +20,7 @@ npm install relit
 #### Quick Start
 ```
 git clone git@github.com:francoislaberge/relit.git
-cd reflash
+cd relit
 npm install
 npm start
 ```
