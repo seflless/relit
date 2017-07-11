@@ -1,4 +1,6 @@
 ### Todos 
+ - [ ] Break up project into the pure module, create simple API
+   - [ ] Break out normal mapping demo as an app that uses the module.
  - [ ] Get the basic relit module going.
   - [ ] Include documentation including coordinate systems (of light and normal maps)
  - [ ] Improve arrow renderer to indicate z direction (make arrow head 3d like so you can see which direction it's pointing)
