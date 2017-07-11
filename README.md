@@ -25,6 +25,12 @@ npm install
 npm start
 ```
 
+#### Other Commands
+
+ - `npm run clean`
+ - `npm run build`
+ - `npm run watch`
+
 #### Publishing to NPM
 
 ```
