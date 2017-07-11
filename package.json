@@ -8,7 +8,10 @@
     "start": "concurrently 'http-server docs -p 8080' 'npm run watch'",
     "clean": "rm -rf docs/lib; mkdir -p docs/lib",
     "build": "npm run clean && ./node_modules/.bin/browserify -s arbitrary -t [ babelify ] src/index.js -o docs/lib/index.js -p mapstraction --debug",
-    "watch": "npm run clean && ./node_modules/.bin/watchify -s arbitrary src/index.js -t [ babelify ] -o docs/lib/index.js -p mapstraction --debug"
+    "watch": "npm run clean && ./node_modules/.bin/watchify -s arbitrary src/index.js -t [ babelify ] -o docs/lib/index.js -p mapstraction --debug",
+    "publish:patch": "npm version patch && npm publish && git push && git push --tags",
+    "publish:minor": "npm version minor && npm publish && git push && git push --tags",
+    "publish:major": "npm version major && npm publish && git push && git push --tags"
   },
   "repository": {
     "type": "git",

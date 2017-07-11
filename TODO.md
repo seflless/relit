@@ -1,15 +1,21 @@
 ### Todos 
+ - [ ] Get the basic relit module going.
+  - [ ] Include documentation including coordinate systems (of light and normal 
+ - [ ] Automate generating releases including making attachments for browser build.
+   - Look for potential projects already doing this. This looked promising:
+     - https://www.npmjs.com/package/github-releases
  - [ ] Break up project into the pure module, create simple API
    - [ ] Break out normal mapping demo as an app that uses the module.
- - [ ] Get the basic relit module going.
-  - [ ] Include documentation including coordinate systems (of light and normal maps)
+ maps)
  - [ ] Improve arrow renderer to indicate z direction (make arrow head 3d like so you can see which direction it's pointing)
  - [ ] Make it so the alpha of the diffuse image is respected 
  - [ ] Simplify code to something near this:
    - https://www.tutorialspoint.com/webgl/webgl_drawing_a_quad.htm
  - Write blog articles
-  - 1) Announcing relit and explaining normal mapping
-  - 2) Describe normal map generation from photos
-  - 3) Describe how to paint normal maps (Show 2D rendered demo, and link to other projects)
+  - [ ] 1) Announcing relit and explaining normal mapping
+  - [ ] 2) Describe normal map generation from photos
+    - [ ] Mention simplified method for just creating a 2d normal map. Tiling being one of the more difficult parts. 
+  - [ ] 3) Describe how to paint normal maps (Show 2D rendered demo, and link to other projects)
+  - [ ] 4) Maybe write up how to use a renderer: three.js or other 3D tools to generate normal maps. Ideally I can create a normal map override for three.js (but do gouraud shading this time.)
  - [x] Create a converter for fixing normal maps using a different coordinate system
  - [x] Create a page that generates a normal map reference sphere set 
