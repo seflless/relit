@@ -1,5 +1,5 @@
 ## Relit
-Relight photos and images using normal maps.
+Relight Photos & Images Using Normal Maps.
 
 <img width="25%" src="http://francoislaberge.com/relit/examples/normal-mapping/texture/statue-diffuse.png"/> **+** 
 <img width="25%" src="http://francoislaberge.com/relit/examples/normal-mapping/texture/statue-normals.png"/> **=** 
