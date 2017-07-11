@@ -16,26 +16,35 @@ npm install --save relit
 ```
 or 
 ```
-yarn add relit
+
 ```
 or
 ```
-<script src="http://francoislaberge.com/relit/lib/index.js" type="text/javascript"></script>
+
 ```
-**Note (for above method)**: It's better to download the file and serve it from your own server.
+
 
 ### Usage
 
+ 1. Installation
+
+        npm install --save relit
+    or 
+
+        yarn add relit
+    or
+
+        <script src="http://francoislaberge.com/relit/lib/index.js" type="text/javascript"></script>
  1. Get a reference to the module first via either of these methods:
             
         const relit = require('relit');
-
     or
 
         <script src="http://francoislaberge.com/relit/lib/index.js" type="text/javascript"></script>
         <script>
             // relit is now attached to the window object, making it a global.
         </script>
+    **Note (for above method)**: It's better to download the file and serve it from your own server
  1. Create an instance inside a specified container DOM element.
 
         let relight = relit.create({
@@ -58,7 +67,7 @@ or
         })
 
      **Note** The inserted canvas is not a `display: block` so that it can be embedded in text. Change this via css styling if needed.
- 1. 
+ 1. TODO: Finish this.
 
 
 
