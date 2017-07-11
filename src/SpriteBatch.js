@@ -4,8 +4,10 @@
  *  Note that this Batch implementation must know about the shader,
  *  what its attribs and uniforms are.
  */
-window.SpriteBatch = function( info )
+let SpriteBatch = function( info )
 {
+	this.lightDir = info.lightDir;
+	this.gl = info.gl;
 	this.bufsize = info.bufsize || 16;		// Number of sprites to allocate for
 	this.shader = info.shader;				// The shader to use for this layer
 	this.texture = info.texture || null;	// Texture
@@ -32,45 +34,45 @@ window.SpriteBatch = function( info )
 	this.sprites = new Array();				// Array of Sprites
 	this.spritesChanged = false;			// Check flag every frame - if changed, will need to re-fill buffers
 
-	gl.useProgram(this.shader.prog);
+	this.gl.useProgram(this.shader.prog);
 
 	//  Enable the attributes
-	gl.enableVertexAttribArray(this.shader.attribs.pos);
-	gl.enableVertexAttribArray(this.shader.attribs.rot);
-	gl.enableVertexAttribArray(this.shader.attribs.uv);
+	this.gl.enableVertexAttribArray(this.shader.attribs.pos);
+	this.gl.enableVertexAttribArray(this.shader.attribs.rot);
+	this.gl.enableVertexAttribArray(this.shader.attribs.uv);
 
 	//  Must fill with data. Setup vertex buffers...
-	this.buf_pos = gl.createBuffer();		// GL vertex buffer position (xy)
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.buf_pos);
-	gl.vertexAttribPointer(this.shader.attribs.pos, 2, gl.FLOAT, false, 0, 0);
-	gl.bufferData(gl.ARRAY_BUFFER, this.arr_pos, gl.DYNAMIC_DRAW);
+	this.buf_pos = this.gl.createBuffer();		// GL vertex buffer position (xy)
+	this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buf_pos);
+	this.gl.vertexAttribPointer(this.shader.attribs.pos, 2, this.gl.FLOAT, false, 0, 0);
+	this.gl.bufferData(this.gl.ARRAY_BUFFER, this.arr_pos, this.gl.DYNAMIC_DRAW);
 
-	this.buf_rot = gl.createBuffer();		// GL vertex buffer rotation (r)
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.buf_rot);
-	gl.vertexAttribPointer(this.shader.attribs.rot, 1, gl.FLOAT, false, 0, 0);
-	gl.bufferData(gl.ARRAY_BUFFER, this.arr_rot, gl.DYNAMIC_DRAW);
+	this.buf_rot = this.gl.createBuffer();		// GL vertex buffer rotation (r)
+	this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buf_rot);
+	this.gl.vertexAttribPointer(this.shader.attribs.rot, 1, this.gl.FLOAT, false, 0, 0);
+	this.gl.bufferData(this.gl.ARRAY_BUFFER, this.arr_rot, this.gl.DYNAMIC_DRAW);
 
-	this.buf_uv = gl.createBuffer();		// GL vertex buffer texcoord (uv)
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.buf_uv);
-	gl.vertexAttribPointer(this.shader.attribs.uv, 2, gl.FLOAT, false, 0, 0);
-	gl.bufferData(gl.ARRAY_BUFFER, this.arr_uv, gl.DYNAMIC_DRAW);
+	this.buf_uv = this.gl.createBuffer();		// GL vertex buffer texcoord (uv)
+	this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buf_uv);
+	this.gl.vertexAttribPointer(this.shader.attribs.uv, 2, this.gl.FLOAT, false, 0, 0);
+	this.gl.bufferData(this.gl.ARRAY_BUFFER, this.arr_uv, this.gl.DYNAMIC_DRAW);
 
-	this.buf_id = gl.createBuffer();		// Array of all indices
-	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.buf_id);
-	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.arr_id, gl.STATIC_DRAW);
+	this.buf_id = this.gl.createBuffer();		// Array of all indices
+	this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.buf_id);
+	this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, this.arr_id, this.gl.STATIC_DRAW);
 
 	//  Initial uniform values
 	const width = 1.0;
 	const height = 1.0;
-	gl.uniform1f(this.shader.uniforms.sceneWidth, width);
-	gl.uniform1f(this.shader.uniforms.sceneHeight, height);
-	gl.uniform1f(this.shader.uniforms.aspect, canvas.width / canvas.height);
-	gl.uniform3fv(this.shader.uniforms.lightDir, lightDir);
-	gl.uniform3fv(this.shader.uniforms.lightColor, new Float32Array([1.0, 1.0, 1.0]));
-	gl.uniform3fv(this.shader.uniforms.ambientColor, new Float32Array([0.0, 0.0, 0.2]));
+	this.gl.uniform1f(this.shader.uniforms.sceneWidth, width);
+	this.gl.uniform1f(this.shader.uniforms.sceneHeight, height);
+	this.gl.uniform1f(this.shader.uniforms.aspect, canvas.width / canvas.height);
+	this.gl.uniform3fv(this.shader.uniforms.lightDir, this.lightDir);
+	this.gl.uniform3fv(this.shader.uniforms.lightColor, new Float32Array([1.0, 1.0, 1.0]));
+	this.gl.uniform3fv(this.shader.uniforms.ambientColor, new Float32Array([0.0, 0.0, 0.2]));
 
-	var e = gl.getError();
-	if( e !== gl.NO_ERROR )
+	var e = this.gl.getError();
+	if( e !== this.gl.NO_ERROR )
 		console.error("GL error: "+e);
 };
 
@@ -181,50 +183,50 @@ SpriteBatch.prototype.render = function()
 		}
 	}
 
-	gl.useProgram(this.shader.prog);
+	this.gl.useProgram(this.shader.prog);
 
 	// If the canvas were resized, we would need to update these values
 	//var aspect = canvas.width / canvas.height;
-	//gl.uniform1f(this.shader.uniforms.sceneWidth, 12.0 * aspect);
-	//gl.uniform1f(this.shader.uniforms.sceneHeight, 12.0);
-	//gl.uniform1f(this.shader.uniforms.aspect, aspect);
+	//this.gl.uniform1f(this.shader.uniforms.sceneWidth, 12.0 * aspect);
+	//this.gl.uniform1f(this.shader.uniforms.sceneHeight, 12.0);
+	//this.gl.uniform1f(this.shader.uniforms.aspect, aspect);
 
 	//  Update the light direction (based on mouse position)
-	gl.uniform3fv(this.shader.uniforms.lightDir, lightDir);
+	this.gl.uniform3fv(this.shader.uniforms.lightDir, this.lightDir);
 
 	//  Activate the diffuse texture
-	gl.activeTexture(gl.TEXTURE0);
-	gl.bindTexture(gl.TEXTURE_2D, this.texture);
-	gl.uniform1i(this.shader.uniforms.samplerD, 0);
+	this.gl.activeTexture(this.gl.TEXTURE0);
+	this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture);
+	this.gl.uniform1i(this.shader.uniforms.samplerD, 0);
 
 	//  Activate the normalmap texture
-	gl.activeTexture(gl.TEXTURE1);
-	gl.bindTexture(gl.TEXTURE_2D, this.normap);
-	gl.uniform1i(this.shader.uniforms.samplerN, 1);
+	this.gl.activeTexture(this.gl.TEXTURE1);
+	this.gl.bindTexture(this.gl.TEXTURE_2D, this.normap);
+	this.gl.uniform1i(this.shader.uniforms.samplerN, 1);
 
 	//  Bind GL buffers, update with recomputed values...
 	//  positions
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.buf_pos);
-	gl.bufferSubData(gl.ARRAY_BUFFER, 0, this.subArr_pos);
-	gl.vertexAttribPointer(this.shader.attribs.pos, 2, gl.FLOAT, false, 0, 0);
+	this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buf_pos);
+	this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, this.subArr_pos);
+	this.gl.vertexAttribPointer(this.shader.attribs.pos, 2, this.gl.FLOAT, false, 0, 0);
 
 	//  rotations
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.buf_rot);
-	gl.bufferSubData(gl.ARRAY_BUFFER, 0, this.subArr_rot);
-	gl.vertexAttribPointer(this.shader.attribs.rot, 1, gl.FLOAT, false, 0, 0);
+	this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buf_rot);
+	this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, this.subArr_rot);
+	this.gl.vertexAttribPointer(this.shader.attribs.rot, 1, this.gl.FLOAT, false, 0, 0);
 
 	//  texcoords
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.buf_uv);
+	this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buf_uv);
 	//  Only update texcoord buffer data if sprites list changed
 	if( this.spritesChanged )
-		gl.bufferSubData(gl.ARRAY_BUFFER, 0, this.subArr_uv);
-	gl.vertexAttribPointer(this.shader.attribs.uv, 2, gl.FLOAT, false, 0, 0);
+		this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, this.subArr_uv);
+	this.gl.vertexAttribPointer(this.shader.attribs.uv, 2, this.gl.FLOAT, false, 0, 0);
 
 	//  indices
-	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.buf_id);
+	this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.buf_id);
 
 	//  finally... draw!
-	gl.drawElements(gl.TRIANGLES, num * 6, gl.UNSIGNED_SHORT, 0);
+	this.gl.drawElements(this.gl.TRIANGLES, num * 6, this.gl.UNSIGNED_SHORT, 0);
 
 	this.spritesChanged = false;	// reset this flag
 };

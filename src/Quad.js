@@ -19,3 +19,7 @@ var Quad = function( info )
 		1.0, 0.0
 	];
 };
+
+module.exports = {
+	Quad
+};

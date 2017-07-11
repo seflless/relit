@@ -1,6 +1,7 @@
 ### Todos 
  - [ ] Get the basic relit module going.
   - [ ] Include documentation including coordinate systems (of light and normal maps)
+ - [ ] Improve arrow renderer to indicate z direction (make arrow head 3d like so you can see which direction it's pointing)
  - [ ] Make it so the alpha of the diffuse image is respected 
  - [ ] Simplify code to something near this:
    - https://www.tutorialspoint.com/webgl/webgl_drawing_a_quad.htm

@@ -1,5 +1,11 @@
 "use strict";
 
+
+let {vertexShaderSource, fragmentShaderSource} = require('./Shaders');
+let {Quad} = require('./Quad');
+let {Sprite} = require('./Sprite');
+require('./SpriteBatch');
+
 //
 //  App Globals
 //
@@ -257,6 +263,8 @@ function startApp()
 
     //  Create a SpriteBatch
     batch = new SpriteBatch({
+        lightDir,
+        gl,
         bufsize: 240,	// Number of sprites to allocate for
         shader: shader,
         texture: texDiffuse,

@@ -71,3 +71,8 @@ void main()
     gl_FragColor = vec4(finalColor, clrDiffuse.a);
 }
 `;
+
+module.exports = {
+    vertexShaderSource,
+    fragmentShaderSource
+}

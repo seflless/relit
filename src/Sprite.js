@@ -9,3 +9,7 @@ var Sprite = function( info )
 	this.pos = {x:info.x, y:info.y};
 	this.rot = info.rot || 0.0;
 };
+
+module.exports = {
+	Sprite
+};
