@@ -18,3 +18,12 @@ a:hover {
     width: 64px;
     height: 64px;
 }
+
+#light-direction{
+    position: absolute;
+    z-index: 2;
+    pointer-events: none;
+}
+p{
+    margin: 5px 0px 10px 0px;
+}
