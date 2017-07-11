@@ -9,21 +9,6 @@ Relight Photos & Images Using Normal Maps.
  - [Normal Mapping](http://francoislaberge.com/relit/examples/normal-mapping/?texture=statue)
  - [Spherical Reference Textures](http://francoislaberge.com/relit/examples/reference-sphere/)
 
-### Installation
-
-```
-npm install --save relit
-```
-or 
-```
-
-```
-or
-```
-
-```
-
-
 ### Usage
 
  1. Installation
