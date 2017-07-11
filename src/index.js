@@ -1,10 +1,7 @@
-"use strict";
-
-
 let {vertexShaderSource, fragmentShaderSource} = require('./Shaders');
 let {Quad} = require('./Quad');
 let {Sprite} = require('./Sprite');
-require('./SpriteBatch');
+let {SpriteBatch} = require('./SpriteBatch');
 
 //
 //  App Globals

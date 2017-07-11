@@ -1,12 +1,12 @@
 ## Relit
 Relight photos and images using normal maps.
 
-<img width="25%" src="http://francoislaberge.com/relit/texture/statue-diffuse.png"/> **+** 
-<img width="25%" src="http://francoislaberge.com/relit/texture/statue-normals.png"/> **=** 
-<img width="25%" src="http://francoislaberge.com/relit/texture/statue-final.gif"/>
+<img width="25%" src="http://francoislaberge.com/relit/examples/normal-mapping/texture/statue-diffuse.png"/> **+** 
+<img width="25%" src="http://francoislaberge.com/relit/examples/normal-mapping/texture/statue-normals.png"/> **=** 
+<img width="25%" src="http://francoislaberge.com/relit/examples/normal-mapping/texture/statue-final.gif"/>
 
 **Demos**
- - [Basic normal mapping with diffuse maps](http://francoislaberge.com/relit/?texture=statue)
+ - [Normal Mapping](http://francoislaberge.com/relit/examples/normal-mapping/?texture=statue)
  - [Spherical Reference Textures](http://francoislaberge.com/relit/examples/reference-sphere/)
 
 ### Usage

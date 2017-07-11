@@ -230,3 +230,7 @@ SpriteBatch.prototype.render = function()
 
 	this.spritesChanged = false;	// reset this flag
 };
+
+module.exports = {
+	SpriteBatch
+};

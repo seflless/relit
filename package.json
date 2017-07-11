@@ -2,13 +2,13 @@
   "name": "relit",
   "version": "1.0.0",
   "description": "",
-  "main": "lib/index.js",
+  "main": "docs/lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "concurrently 'http-server docs -p 8080' 'npm run watch'",
-    "clean": "rm -rf lib; mkdir lib",
-    "build": "npm run clean && ./node_modules/.bin/browserify -s arbitrary -t [ babelify ] src/index.js -o lib/index.js -p mapstraction --debug",
-    "watch": "npm run clean && ./node_modules/.bin/watchify -s arbitrary src/index.js -t [ babelify ] -o lib/index.js -p mapstraction --debug"
+    "clean": "rm -rf docs/lib; mkdir -p docs/lib",
+    "build": "npm run clean && ./node_modules/.bin/browserify -s arbitrary -t [ babelify ] src/index.js -o docs/lib/index.js -p mapstraction --debug",
+    "watch": "npm run clean && ./node_modules/.bin/watchify -s arbitrary src/index.js -t [ babelify ] -o docs/lib/index.js -p mapstraction --debug"
   },
   "repository": {
     "type": "git",
