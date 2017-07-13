@@ -1,7 +1,10 @@
 ### Todos 
+ - [ ] Change system to a point light via per vertex lighting
+  - [ ] Use pixel coordinate system for end users
+  - [ ] Need light range now
+  - [ ] Use normalized coordinates for lighting, repurpose uv coordinates as they provide everything we need
  - [ ] Get the basic relit module going.
   - [ ] Include documentation including coordinate systems (of light and normal 
- - [ ] Change system to a point light via per vertex lighting
  - [ ] Automate generating releases including making attachments for browser build.
    - Look for potential projects already doing this. This looked promising:
      - https://www.npmjs.com/package/github-releases

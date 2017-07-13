@@ -60,15 +60,26 @@ void main()
     // scale & normalize the normalmap color to get a normal vector for this texel
     vec3 normal = normalize(clrNormal * 2.0 - 1.0);
 
+    vec3 lightDelta = normalize(vec3( vLightDir.x - vTexCoord.x, vLightDir.y - vTexCoord.y, vLightDir.z ));
+    float lightGradient = 0.0;
+    float lightDistance = length(lightDelta);
+    float lightRange = 0.1;
+    
+    if( lightDistance < lightRange ){
+        lightGradient = 1.0 - lightDistance / lightRange;
+    } 
+
     // Calc normal dot lightdir to get directional lighting value for this texel.
     // Clamp negative values to 0.
-    vec3 litDirColor = uLightColor * max(dot(normal, vLightDir), 0.0);
+    vec3 litDirColor = uLightColor * lightGradient * max(dot(normal, lightDelta), 0.0);
 
     // add ambient light, then multiply result by diffuse tex color for final color
     vec3 finalColor = (uAmbientColor + litDirColor) * clrDiffuse.rgb;
 
+    float a = 0.5;
+
     // finally apply alpha of texture for the final color to render
-    gl_FragColor = vec4(finalColor, clrDiffuse.a);
+    gl_FragColor = vec4(finalColor, clrDiffuse.w);
 }
 `;
 

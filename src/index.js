@@ -255,7 +255,7 @@ function startApp()
     gl.disable(gl.DEPTH_TEST);
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-    gl.clearColor(0.0, 0.0, 0.0, 0.0);
+    //gl.clearColor(0.0, 0.0, 0.0, 0.0);
     gl.viewport(0, 0, canvas.width, canvas.height);
 
     //  Create a SpriteBatch
@@ -326,42 +326,9 @@ function startApp()
  */
 function doCursorMove( x, y, reverseZ )
 {
-    var radius = canvas.width / 2.0,
-        dx = x - canvas.width / 2.0,
-        dy = -(y - canvas.height / 2.0),
-        // Pretend the mouse is intersecting a sphere, it's height would be 
-        // where the mouse intersects the sphere
-        distance2D = Math.sqrt(dx * dx + dy * dy);
-
-    if ( distance2D > radius ) {
-        distance2D = radius;
-    }  
-    var dz = Math.sin( 
-                            Math.PI / 2.0 *
-                            (radius - distance2D )/radius
-                        ) * radius;
-
-    var len = Math.sqrt(dx * dx + dy * dy + dz * dz);
-        /*,
-        dz = 
-        len = */
-    if( len > 0.0 )
-    {
-        // normalize xy
-        var s = 1.0 / len;
-        dx *= s;
-        dy *= s;
-        dz *= s;
-    }
-    else
-    {
-        dx = 1.0;
-        dy = 0.0;
-        dz = 0.0;
-    }
-    lightDir[0] = dx;
-    lightDir[1] = dy;
-    lightDir[2] = reverseZ ? -dz: dz;
+    lightDir[0] = x / canvas.width;
+    lightDir[1] = y / canvas.height;
+    lightDir[2] = 1.0;
 }
 
 /**

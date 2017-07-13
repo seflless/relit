@@ -54,7 +54,9 @@ Relight Photos & Images Using Normal Maps.
      **Note** The inserted canvas is not a `display: block` so that it can be embedded in text. Change this via css styling if needed.
  1. TODO: Finish this.
 
+### Coordinate Systems
 
+<img src="http://francoislaberge.com/relit/images/coordinate-system.png"/>
 
 ### Contributing
 
