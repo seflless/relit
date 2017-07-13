@@ -39,11 +39,9 @@ void main(void)
     // Simply rotate the light dir by negative vertex rotation.
     float cosR = cos(-aRotation);
     float sinR = sin(-aRotation);
-    vLightDir.x = (uLightDir.x * cosR - uLightDir.y * sinR) * uAspect;  // correct for aspect ratio
-    vLightDir.y = uLightDir.x * sinR + uLightDir.y * cosR;
+    vLightDir.x = uLightDir.x;
+    vLightDir.y = uLightDir.y;
     vLightDir.z = uLightDir.z;
-    // Finally normalize it so the frag shader can use it without any further adjustments
-    vLightDir = normalize(vLightDir);
 
     // Since we're working in 2D, we can do a simple 2D scale to normalized device coords (from -1..1)
     // (no need for a full blown proj/modelview matrix multiply)
@@ -77,23 +75,21 @@ void main()
     // scale & normalize the normalmap color to get a normal vector for this texel
     vec3 normal = normalize(clrNormal * 2.0 - 1.0);
 
-    vec3 lightDelta = normalize(vec3( vLightDir.x - vTexCoord.x, vLightDir.y - vTexCoord.y, vLightDir.z ));
+    vec3 lightDelta = vec3( vLightDir.x - vTexCoord.x, vLightDir.y - vTexCoord.y, 0.2 );
     float lightGradient = 0.0;
     float lightDistance = length(lightDelta);
-    float lightRange = 0.1;
+    float lightRange = 1.0;
     
     if( lightDistance < lightRange ){
-        lightGradient = 1.0 - lightDistance / lightRange;
-    } 
+       lightGradient = 1.0 - lightDistance / lightRange;
+    }
 
     // Calc normal dot lightdir to get directional lighting value for this texel.
     // Clamp negative values to 0.
-    vec3 litDirColor = uLightColor * lightGradient * max(dot(normal, lightDelta), 0.0);
+    vec3 litDirColor = uLightColor * lightGradient * max( dot( normal, normalize(lightDelta) ), 0.0 );
 
     // add ambient light, then multiply result by diffuse tex color for final color
     vec3 finalColor = (uAmbientColor + litDirColor) * clrDiffuse.rgb;
-
-    float a = 0.5;
 
     // finally apply alpha of texture for the final color to render
     gl_FragColor = vec4(finalColor, clrDiffuse.w);
@@ -645,7 +641,8 @@ function startApp() {
 function doCursorMove(x, y, reverseZ) {
     lightDir[0] = x / canvas.width;
     lightDir[1] = y / canvas.height;
-    lightDir[2] = 1.0;
+    lightDir[2] = 0.5;
+    console.log(x, y, canvas.width, canvas.height, lightDir);
 }
 
 /**
@@ -667,30 +664,44 @@ function doFrame() {
 function render() {
     batch.render();
 
+    // console.log(
+    //     lightDir[0] * lightDirectionCanvas.width, 
+    //     lightDir[1] * lightDirectionCanvas.height,
+    // )
+    drawCircle(lightDir[0] * lightDirectionCanvas.width, lightDir[1] * lightDirectionCanvas.height, lightDirectionCanvas.width / 16);
+
     // Draw light direction arrow. Based off of this approach
     // https://stackoverflow.com/a/6333775
-    const length = lightDirectionCanvas.width / 2;
-    const toX = lightDirectionCanvas.width / 2;
-    const toY = lightDirectionCanvas.height / 2;
-    const fromX = toX + lightDir[0] * length;
-    const fromY = toY - lightDir[1] * length;
-    const deltaX = toX - fromX;
-    const deltaY = toY - fromY;
-    const lineLength = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-    const arrowHeadLength = Math.min(10, lineLength);
-    const angle = Math.atan2(toY - fromY, toX - fromX);
+    // const length = lightDirectionCanvas.width/2;
+    // const fromX = 0;//lightDirectionCanvas.width/2;
+    // const fromY = 0;//lightDirectionCanvas.height/2;
+    // const toX = lightDir[0] / canvas.width * lightDirectionCanvas.width;
+    // const toY = ;
+    // const deltaX = toX - fromX;
+    // const deltaY = toY - fromY;
+    // const lineLength = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    // const arrowHeadLength = Math.min(10, lineLength);
+    // const angle = Math.atan2(toY-fromY,toX-fromX);
 
+    // lightDirectionCtx.clearRect( 0, 0, lightDirectionCanvas.width, lightDirectionCanvas.height );
+
+    // lightDirectionCtx.strokeStyle = "rgba( 255, 255, 255, 0.8 )";
+    // lightDirectionCtx.lineWidth = 2;
+    // lightDirectionCtx.beginPath();
+    // lightDirectionCtx.moveTo(fromX, fromY);
+    // lightDirectionCtx.lineTo(toX, toY);
+    // lightDirectionCtx.lineTo(toX-arrowHeadLength*Math.cos(angle-Math.PI/6),toY-arrowHeadLength*Math.sin(angle-Math.PI/6));
+    // lightDirectionCtx.moveTo(toX, toY);
+    // lightDirectionCtx.lineTo(toX-arrowHeadLength*Math.cos(angle+Math.PI/6),toY-arrowHeadLength*Math.sin(angle+Math.PI/6));
+    // lightDirectionCtx.stroke();
+}
+
+function drawCircle(centerX, centerY, radius) {
     lightDirectionCtx.clearRect(0, 0, lightDirectionCanvas.width, lightDirectionCanvas.height);
-
-    lightDirectionCtx.strokeStyle = "rgba( 255, 255, 255, 0.8 )";
-    lightDirectionCtx.lineWidth = 2;
     lightDirectionCtx.beginPath();
-    lightDirectionCtx.moveTo(fromX, fromY);
-    lightDirectionCtx.lineTo(toX, toY);
-    lightDirectionCtx.lineTo(toX - arrowHeadLength * Math.cos(angle - Math.PI / 6), toY - arrowHeadLength * Math.sin(angle - Math.PI / 6));
-    lightDirectionCtx.moveTo(toX, toY);
-    lightDirectionCtx.lineTo(toX - arrowHeadLength * Math.cos(angle + Math.PI / 6), toY - arrowHeadLength * Math.sin(angle + Math.PI / 6));
-    lightDirectionCtx.stroke();
+    lightDirectionCtx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+    lightDirectionCtx.fillStyle = 'green';
+    lightDirectionCtx.fill();
 }
 
 /**
