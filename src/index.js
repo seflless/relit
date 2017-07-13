@@ -362,11 +362,11 @@ function render()
     //     lightDir[0] * lightDirectionCanvas.width, 
     //     lightDir[1] * lightDirectionCanvas.height,
     // )
-    drawCircle( 
-        lightDir[0] * lightDirectionCanvas.width, 
-        lightDir[1] * lightDirectionCanvas.height,
-        lightDirectionCanvas.width / 16
-    );
+    // drawCircle( 
+    //     lightDir[0] * lightDirectionCanvas.width, 
+    //     lightDir[1] * lightDirectionCanvas.height,
+    //     lightDirectionCanvas.width / 16
+    // );
 
     // Draw light direction arrow. Based off of this approach
     // https://stackoverflow.com/a/6333775
