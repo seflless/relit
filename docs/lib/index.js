@@ -668,7 +668,11 @@ function render() {
     //     lightDir[0] * lightDirectionCanvas.width, 
     //     lightDir[1] * lightDirectionCanvas.height,
     // )
-    drawCircle(lightDir[0] * lightDirectionCanvas.width, lightDir[1] * lightDirectionCanvas.height, lightDirectionCanvas.width / 16);
+    // drawCircle( 
+    //     lightDir[0] * lightDirectionCanvas.width, 
+    //     lightDir[1] * lightDirectionCanvas.height,
+    //     lightDirectionCanvas.width / 16
+    // );
 
     // Draw light direction arrow. Based off of this approach
     // https://stackoverflow.com/a/6333775
@@ -700,7 +704,7 @@ function drawCircle(centerX, centerY, radius) {
     lightDirectionCtx.clearRect(0, 0, lightDirectionCanvas.width, lightDirectionCanvas.height);
     lightDirectionCtx.beginPath();
     lightDirectionCtx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
-    lightDirectionCtx.fillStyle = 'green';
+    lightDirectionCtx.fillStyle = 'white';
     lightDirectionCtx.fill();
 }
 
