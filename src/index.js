@@ -291,9 +291,10 @@ function startApp()
     monkeys.push(monkey);
 
 
+
     //  Watch for mouse/finger movement
     canvas.addEventListener('mousemove', function(e) {
-        doCursorMove( e.clientX - canvasPos.x, e.clientY - canvasPos.y, e.buttons===1 );
+        doCursorMove( e.clientX - canvasPos.x, e.clientY - canvasPos.y , e.buttons===1 );
         e.preventDefault();
     });
     canvas.addEventListener('mouseup', function(e) {
@@ -397,7 +398,7 @@ function drawCircle(centerX, centerY, radius){
     lightDirectionCtx.clearRect( 0, 0, lightDirectionCanvas.width, lightDirectionCanvas.height);
     lightDirectionCtx.beginPath();
     lightDirectionCtx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
-    lightDirectionCtx.fillStyle = 'green';
+    lightDirectionCtx.fillStyle = 'white';
     lightDirectionCtx.fill();
 }
 
