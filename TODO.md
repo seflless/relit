@@ -8,6 +8,8 @@
  - [ ] Automate generating releases including making attachments for browser build.
    - Look for potential projects already doing this. This looked promising:
      - https://www.npmjs.com/package/github-releases
+ - Add penumbra (inner/outter)
+   - Use cases include cartoony lighting with perfect circle no gradient lighting if you set inner and outer to the same value
  - [ ] Break up project into the pure module, create simple API
    - [ ] Break out normal mapping demo as an app that uses the module.
  maps)
@@ -19,7 +21,8 @@
   - [ ] 1) Announcing relit and explaining normal mapping
   - [ ] 2) Describe normal map generation from photos
     - [ ] Mention simplified method for just creating a 2d normal map. Tiling being one of the more difficult parts. 
-  - [ ] 3) Describe how to paint normal maps (Show 2D rendered demo, and link to other projects)
+  - [ ] 3) Describe how to paint normal maps (Show 2D rendered demo, and link to other projects) [Maybe make this #2?]
   - [ ] 4) Maybe write up how to use a renderer: three.js or other 3D tools to generate normal maps. Ideally I can create a normal map override for three.js (but do gouraud shading this time.)
+  - [ ] 5) Submit normal mapping as white paper?
  - [x] Create a converter for fixing normal maps using a different coordinate system
  - [x] Create a page that generates a normal map reference sphere set 
