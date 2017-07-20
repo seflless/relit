@@ -2,3 +2,4 @@ docs/examples
 docs/index.html
 docs/styles
 docs/*.html
+npm-debug*
