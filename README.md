@@ -1,7 +1,7 @@
 ## Relit
 Relight Photos & Images Using Normal Maps.
 
-<img width="25%" src="http://francoislaberge.com/relit/examples/normal-mapping/texture/statue-diffuse.png"/> **+** 
+<img width="25%" src="http://francoislaberge.com/relit/examples/normal-mapping/texture/statue-diffuse-thumbnail.png"/> **+** 
 <img width="25%" src="http://francoislaberge.com/relit/examples/normal-mapping/texture/statue-normals.png"/> **=** 
 <img width="25%" src="http://francoislaberge.com/relit/examples/normal-mapping/texture/statue-final.gif"/>
 
@@ -32,7 +32,7 @@ Relight Photos & Images Using Normal Maps.
     **Note (for above method)**: It's better to download the file and serve it from your own server
  1. Create an instance inside a specified container DOM element.
 
-        let relight = relit.create({
+        relit.create({
             element: document.body,
             diffuseTexture: "diffuse.png",
             normalsTexture: "normals.png",
@@ -49,6 +49,9 @@ Relight Photos & Images Using Normal Maps.
 
             ambientColor: [0, 0, 64],           // The color of the ambient light.
                                                 // Default is black [ 0, 0, 0 ]
+        })
+        .then( (relight) => {
+            
         })
 
      **Note** The inserted canvas is not a `display: block` so that it can be embedded in text. Change this via css styling if needed.
