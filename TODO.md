@@ -37,6 +37,8 @@
       - https://www.codeandweb.com/spriteilluminator
   - [ ] 2) Describe normal map generation from photos
     - [ ] Mention simplified method for just creating a 2d normal map. Tiling being one of the more difficult parts. 
+    - [ ] Explain alternate techniques like the relighting Sylvia demo: http://www.romancortes.com/ficheros/relighting-sylvia.html
+     - [ ] Credit where credit's due: http://www.pauldebevec.com/
   - [ ] 3) Describe how to paint normal maps (Show 2D rendered demo, and link to other projects) [Maybe make this #2?]
   - [ ] 4) Maybe write up how to use a renderer: three.js or other 3D tools to generate normal maps. Ideally I can create a normal map override for three.js (but do gouraud shading this time.)
   - [ ] 5) Submit normal mapping as white paper?
