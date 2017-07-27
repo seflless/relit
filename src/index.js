@@ -327,13 +327,42 @@ function startApp()
  */
 function doCursorMove( x, y, reverseZ )
 {
-    lightDir[0] = x / canvas.width;
-    lightDir[1] = y / canvas.height;
-    lightDir[2] = 0.5;
-    console.log(
-        x, y, 
-        canvas.width, canvas.height, 
-        lightDir);
+    var radius = canvas.width / 2.0,
+        dx = x - canvas.width / 2.0,
+        dy = -(y - canvas.height / 2.0),
+        // Pretend the mouse is intersecting a sphere, it's height would be 
+        // where the mouse intersects the sphere
+        distance2D = Math.sqrt(dx * dx + dy * dy);
+
+    if ( distance2D > radius ) {
+        distance2D = radius;
+    }  
+    var dz = Math.sin( 
+                            Math.PI / 2.0 *
+                            (radius - distance2D )/radius
+                        ) * radius;
+
+    var len = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        /*,
+        dz = 
+        len = */
+    if( len > 0.0 )
+    {
+        // normalize xy
+        var s = 1.0 / len;
+        dx *= s;
+        dy *= s;
+        dz *= s;
+    }
+    else
+    {
+        dx = 1.0;
+        dy = 0.0;
+        dz = 0.0;
+    }
+    lightDir[0] = dx;
+    lightDir[1] = dy;
+    lightDir[2] = reverseZ ? -dz: dz;
 }
 
 /**
@@ -358,40 +387,30 @@ function render()
 {
     batch.render();
 
-    // console.log(
-    //     lightDir[0] * lightDirectionCanvas.width, 
-    //     lightDir[1] * lightDirectionCanvas.height,
-    // )
-    // drawCircle( 
-    //     lightDir[0] * lightDirectionCanvas.width, 
-    //     lightDir[1] * lightDirectionCanvas.height,
-    //     lightDirectionCanvas.width / 16
-    // );
-
     // Draw light direction arrow. Based off of this approach
     // https://stackoverflow.com/a/6333775
-    // const length = lightDirectionCanvas.width/2;
-    // const fromX = 0;//lightDirectionCanvas.width/2;
-    // const fromY = 0;//lightDirectionCanvas.height/2;
-    // const toX = lightDir[0] / canvas.width * lightDirectionCanvas.width;
-    // const toY = ;
-    // const deltaX = toX - fromX;
-    // const deltaY = toY - fromY;
-    // const lineLength = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-    // const arrowHeadLength = Math.min(10, lineLength);
-    // const angle = Math.atan2(toY-fromY,toX-fromX);
+    const length = lightDirectionCanvas.width/2;
+    const toX = lightDirectionCanvas.width/2;
+    const toY = lightDirectionCanvas.height/2;
+    const fromX = toX + lightDir[0] * length;
+    const fromY = toY - lightDir[1] * length;
+    const deltaX = toX - fromX;
+    const deltaY = toY - fromY;
+    const lineLength = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    const arrowHeadLength = Math.min(10, lineLength);
+    const angle = Math.atan2(toY-fromY,toX-fromX);
 
-    // lightDirectionCtx.clearRect( 0, 0, lightDirectionCanvas.width, lightDirectionCanvas.height );
+    lightDirectionCtx.clearRect( 0, 0, lightDirectionCanvas.width, lightDirectionCanvas.height );
 
-    // lightDirectionCtx.strokeStyle = "rgba( 255, 255, 255, 0.8 )";
-    // lightDirectionCtx.lineWidth = 2;
-    // lightDirectionCtx.beginPath();
-    // lightDirectionCtx.moveTo(fromX, fromY);
-    // lightDirectionCtx.lineTo(toX, toY);
-    // lightDirectionCtx.lineTo(toX-arrowHeadLength*Math.cos(angle-Math.PI/6),toY-arrowHeadLength*Math.sin(angle-Math.PI/6));
-    // lightDirectionCtx.moveTo(toX, toY);
-    // lightDirectionCtx.lineTo(toX-arrowHeadLength*Math.cos(angle+Math.PI/6),toY-arrowHeadLength*Math.sin(angle+Math.PI/6));
-    // lightDirectionCtx.stroke();
+    lightDirectionCtx.strokeStyle = "rgba( 255, 255, 255, 0.8 )";
+    lightDirectionCtx.lineWidth = 2;
+    lightDirectionCtx.beginPath();
+    lightDirectionCtx.moveTo(fromX, fromY);
+    lightDirectionCtx.lineTo(toX, toY);
+    lightDirectionCtx.lineTo(toX-arrowHeadLength*Math.cos(angle-Math.PI/6),toY-arrowHeadLength*Math.sin(angle-Math.PI/6));
+    lightDirectionCtx.moveTo(toX, toY);
+    lightDirectionCtx.lineTo(toX-arrowHeadLength*Math.cos(angle+Math.PI/6),toY-arrowHeadLength*Math.sin(angle+Math.PI/6));
+    lightDirectionCtx.stroke();
 }
 
 function drawCircle(centerX, centerY, radius){

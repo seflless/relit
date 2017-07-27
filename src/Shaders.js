@@ -22,9 +22,11 @@ void main(void)
     // Simply rotate the light dir by negative vertex rotation.
     float cosR = cos(-aRotation);
     float sinR = sin(-aRotation);
-    vLightDir.x = uLightDir.x;
-    vLightDir.y = uLightDir.y;
+    vLightDir.x = (uLightDir.x * cosR - uLightDir.y * sinR) * uAspect;  // correct for aspect ratio
+    vLightDir.y = uLightDir.x * sinR + uLightDir.y * cosR;
     vLightDir.z = uLightDir.z;
+    // Finally normalize it so the frag shader can use it without any further adjustments
+    vLightDir = normalize(vLightDir);
 
     // Since we're working in 2D, we can do a simple 2D scale to normalized device coords (from -1..1)
     // (no need for a full blown proj/modelview matrix multiply)
@@ -58,24 +60,15 @@ void main()
     // scale & normalize the normalmap color to get a normal vector for this texel
     vec3 normal = normalize(clrNormal * 2.0 - 1.0);
 
-    vec3 lightDelta = vec3( vLightDir.x - vTexCoord.x, vLightDir.y - vTexCoord.y, 0.2 );
-    float lightGradient = 0.0;
-    float lightDistance = length(lightDelta);
-    float lightRange = 1.0;
-    
-    if( lightDistance < lightRange ){
-       lightGradient = 1.0 - lightDistance / lightRange;
-    }
-
     // Calc normal dot lightdir to get directional lighting value for this texel.
     // Clamp negative values to 0.
-    vec3 litDirColor = uLightColor * lightGradient * max( dot( normal, normalize(lightDelta) ), 0.0 );
+    vec3 litDirColor = uLightColor * max(dot(normal, vLightDir), 0.0);
 
     // add ambient light, then multiply result by diffuse tex color for final color
     vec3 finalColor = (uAmbientColor + litDirColor) * clrDiffuse.rgb;
 
     // finally apply alpha of texture for the final color to render
-    gl_FragColor = vec4(finalColor, clrDiffuse.w);
+    gl_FragColor = vec4(finalColor, clrDiffuse.a);
 }
 `;
 

@@ -39,9 +39,11 @@ void main(void)
     // Simply rotate the light dir by negative vertex rotation.
     float cosR = cos(-aRotation);
     float sinR = sin(-aRotation);
-    vLightDir.x = uLightDir.x;
-    vLightDir.y = uLightDir.y;
+    vLightDir.x = (uLightDir.x * cosR - uLightDir.y * sinR) * uAspect;  // correct for aspect ratio
+    vLightDir.y = uLightDir.x * sinR + uLightDir.y * cosR;
     vLightDir.z = uLightDir.z;
+    // Finally normalize it so the frag shader can use it without any further adjustments
+    vLightDir = normalize(vLightDir);
 
     // Since we're working in 2D, we can do a simple 2D scale to normalized device coords (from -1..1)
     // (no need for a full blown proj/modelview matrix multiply)
@@ -75,24 +77,15 @@ void main()
     // scale & normalize the normalmap color to get a normal vector for this texel
     vec3 normal = normalize(clrNormal * 2.0 - 1.0);
 
-    vec3 lightDelta = vec3( vLightDir.x - vTexCoord.x, vLightDir.y - vTexCoord.y, 0.2 );
-    float lightGradient = 0.0;
-    float lightDistance = length(lightDelta);
-    float lightRange = 1.0;
-    
-    if( lightDistance < lightRange ){
-       lightGradient = 1.0 - lightDistance / lightRange;
-    }
-
     // Calc normal dot lightdir to get directional lighting value for this texel.
     // Clamp negative values to 0.
-    vec3 litDirColor = uLightColor * lightGradient * max( dot( normal, normalize(lightDelta) ), 0.0 );
+    vec3 litDirColor = uLightColor * max(dot(normal, vLightDir), 0.0);
 
     // add ambient light, then multiply result by diffuse tex color for final color
     vec3 finalColor = (uAmbientColor + litDirColor) * clrDiffuse.rgb;
 
     // finally apply alpha of texture for the final color to render
-    gl_FragColor = vec4(finalColor, clrDiffuse.w);
+    gl_FragColor = vec4(finalColor, clrDiffuse.a);
 }
 `;
 
@@ -639,10 +632,37 @@ function startApp() {
  *  Set light direction based on mouse position
  */
 function doCursorMove(x, y, reverseZ) {
-    lightDir[0] = x / canvas.width;
-    lightDir[1] = y / canvas.height;
-    lightDir[2] = 0.5;
-    console.log(x, y, canvas.width, canvas.height, lightDir);
+    var radius = canvas.width / 2.0,
+        dx = x - canvas.width / 2.0,
+        dy = -(y - canvas.height / 2.0),
+
+    // Pretend the mouse is intersecting a sphere, it's height would be 
+    // where the mouse intersects the sphere
+    distance2D = Math.sqrt(dx * dx + dy * dy);
+
+    if (distance2D > radius) {
+        distance2D = radius;
+    }
+    var dz = Math.sin(Math.PI / 2.0 * (radius - distance2D) / radius) * radius;
+
+    var len = Math.sqrt(dx * dx + dy * dy + dz * dz);
+    /*,
+    dz = 
+    len = */
+    if (len > 0.0) {
+        // normalize xy
+        var s = 1.0 / len;
+        dx *= s;
+        dy *= s;
+        dz *= s;
+    } else {
+        dx = 1.0;
+        dy = 0.0;
+        dz = 0.0;
+    }
+    lightDir[0] = dx;
+    lightDir[1] = dy;
+    lightDir[2] = reverseZ ? -dz : dz;
 }
 
 /**
@@ -664,40 +684,30 @@ function doFrame() {
 function render() {
     batch.render();
 
-    // console.log(
-    //     lightDir[0] * lightDirectionCanvas.width, 
-    //     lightDir[1] * lightDirectionCanvas.height,
-    // )
-    // drawCircle( 
-    //     lightDir[0] * lightDirectionCanvas.width, 
-    //     lightDir[1] * lightDirectionCanvas.height,
-    //     lightDirectionCanvas.width / 16
-    // );
-
     // Draw light direction arrow. Based off of this approach
     // https://stackoverflow.com/a/6333775
-    // const length = lightDirectionCanvas.width/2;
-    // const fromX = 0;//lightDirectionCanvas.width/2;
-    // const fromY = 0;//lightDirectionCanvas.height/2;
-    // const toX = lightDir[0] / canvas.width * lightDirectionCanvas.width;
-    // const toY = ;
-    // const deltaX = toX - fromX;
-    // const deltaY = toY - fromY;
-    // const lineLength = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-    // const arrowHeadLength = Math.min(10, lineLength);
-    // const angle = Math.atan2(toY-fromY,toX-fromX);
+    const length = lightDirectionCanvas.width / 2;
+    const toX = lightDirectionCanvas.width / 2;
+    const toY = lightDirectionCanvas.height / 2;
+    const fromX = toX + lightDir[0] * length;
+    const fromY = toY - lightDir[1] * length;
+    const deltaX = toX - fromX;
+    const deltaY = toY - fromY;
+    const lineLength = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    const arrowHeadLength = Math.min(10, lineLength);
+    const angle = Math.atan2(toY - fromY, toX - fromX);
 
-    // lightDirectionCtx.clearRect( 0, 0, lightDirectionCanvas.width, lightDirectionCanvas.height );
+    lightDirectionCtx.clearRect(0, 0, lightDirectionCanvas.width, lightDirectionCanvas.height);
 
-    // lightDirectionCtx.strokeStyle = "rgba( 255, 255, 255, 0.8 )";
-    // lightDirectionCtx.lineWidth = 2;
-    // lightDirectionCtx.beginPath();
-    // lightDirectionCtx.moveTo(fromX, fromY);
-    // lightDirectionCtx.lineTo(toX, toY);
-    // lightDirectionCtx.lineTo(toX-arrowHeadLength*Math.cos(angle-Math.PI/6),toY-arrowHeadLength*Math.sin(angle-Math.PI/6));
-    // lightDirectionCtx.moveTo(toX, toY);
-    // lightDirectionCtx.lineTo(toX-arrowHeadLength*Math.cos(angle+Math.PI/6),toY-arrowHeadLength*Math.sin(angle+Math.PI/6));
-    // lightDirectionCtx.stroke();
+    lightDirectionCtx.strokeStyle = "rgba( 255, 255, 255, 0.8 )";
+    lightDirectionCtx.lineWidth = 2;
+    lightDirectionCtx.beginPath();
+    lightDirectionCtx.moveTo(fromX, fromY);
+    lightDirectionCtx.lineTo(toX, toY);
+    lightDirectionCtx.lineTo(toX - arrowHeadLength * Math.cos(angle - Math.PI / 6), toY - arrowHeadLength * Math.sin(angle - Math.PI / 6));
+    lightDirectionCtx.moveTo(toX, toY);
+    lightDirectionCtx.lineTo(toX - arrowHeadLength * Math.cos(angle + Math.PI / 6), toY - arrowHeadLength * Math.sin(angle + Math.PI / 6));
+    lightDirectionCtx.stroke();
 }
 
 function drawCircle(centerX, centerY, radius) {
