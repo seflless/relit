@@ -68,8 +68,14 @@ let SpriteBatch = function( info )
 	this.gl.uniform1f(this.shader.uniforms.sceneHeight, height);
 	this.gl.uniform1f(this.shader.uniforms.aspect, canvas.width / canvas.height);
 	this.gl.uniform3fv(this.shader.uniforms.lightDir, this.lightDir);
-	this.gl.uniform3fv(this.shader.uniforms.lightColor, new Float32Array([1.0, 1.0, 1.0]));
-	this.gl.uniform3fv(this.shader.uniforms.ambientColor, new Float32Array([0.0, 0.0, 0.2]));
+	
+	
+	const ambient = 0.2;
+	const light = 1.0;
+	this.gl.uniform3fv(this.shader.uniforms.lightColor, new Float32Array([ light, light, light ]));
+	
+	
+	this.gl.uniform3fv(this.shader.uniforms.ambientColor, new Float32Array([ 0, 0, ambient ]));
 
 	var e = this.gl.getError();
 	if( e !== this.gl.NO_ERROR )

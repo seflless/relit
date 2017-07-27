@@ -20,6 +20,7 @@
  - [ ] Simplify code to something near this:
    - https://www.tutorialspoint.com/webgl/webgl_drawing_a_quad.htm
  - Write blog articles
+  - Practice articles at meetups: https://www.meetup.com/Boston-Node/events/241652946/
   - [ ] 1) Announcing relit and explaining normal mapping
     - This Unity explanation is pretty good: 
       - https://docs.unity3d.com/Manual/StandardShaderMaterialParameterNormalMap.html
