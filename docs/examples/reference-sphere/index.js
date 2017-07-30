@@ -133,10 +133,38 @@ function getNormalAsColor( x, y, reverseZ ) {
  */
 document.querySelectorAll('a').forEach( (a) => {
     a.addEventListener('click', (event) => {
-        // target is it's child element the canvas it wraps
-        a.href = event.target.toDataURL('image/png');
+        a.href = document.getElementById(`${a.download.replace('.png','')}-canvas`).toDataURL('image/png');
     })
 })
 
 const totalTimeInSeconds = (performance.now() - startTime)/1000;
 console.log( `Generation took ${totalTimeInSeconds.toFixed(1)}s`);
+
+
+const sampleColor = document.getElementById('sample-color');
+normalsCanvas.addEventListener('mousemove', (event) => {
+    var rc = normalsCanvas.getBoundingClientRect();
+    const x = event.clientX - rc.left;
+    const y = event.clientY - rc.top;
+    //console.log( x, y );
+
+    var p = normalsCtx.getImageData(x, y, 1, 1).data; 
+    //console.log(p);
+    sampleColor.style.backgroundColor = `rgb(${p[0]}, ${p[1]}, ${p[2]})`;
+
+    document.getElementById('sample-hex').innerHTML = `#${channelToHex(p[0])}${channelToHex(p[1])}${channelToHex(p[2])}`;
+
+    var normal = toNormal(p);
+    document.getElementById('x').innerHTML = normal[0].toFixed(2);
+    document.getElementById('y').innerHTML = normal[1].toFixed(2);
+    document.getElementById('z').innerHTML = normal[2].toFixed(2);
+
+});
+
+function channelToHex(channel){
+    if(channel>9){
+        return channel.toString(16);
+    } else {
+        return "0"+channel;
+    }
+}

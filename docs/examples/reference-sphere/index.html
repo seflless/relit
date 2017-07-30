@@ -16,27 +16,39 @@
 
             margin: 0px;
         }
-        p, h3{
+        p, h3, .block{
             background-color: white;
             margin: 3px;
             padding: 10px;
             text-align: center;
         }
-        a{
-            display: block;
+        #sample-color{
+            top: 8px;
+            width: 32px;
+            height: 32px;
+            background: white;
+            display: inline-block;
+            position: relative;
+        }
+        .axis{
+            line-height: 32px;
         }
     </style>  
 </head>
 <body>	
-    <p>Click each texture to download as a PNG</p>
+    <p>Download Textures -> <a download="normals.png" href="#">Normals</a> or <a download="diffuse.png" href="#">Diffuse</a></p>
     <h3>Normals Texture</h3>
-    <a download="normals.png">
-	    <canvas id="normals-canvas"></canvas>
-    </a>
-    <h3>Diffuse Texture</h3>
-    <a download="diffuse.png">
-        <canvas id="diffuse-canvas"></canvas>
-    </a>
+    <p>Mouse over to sample color/normal.</p>
+    <p>
+        <span id="sample-hex">#000000</span>
+        <span id="sample-color"></span>
+        <span class="axis" id="x">0.0</span>
+        <span class="axis" id="y">0.0</span>
+        <span class="axis" id="z">0.0</span>
+    </p>
+	<canvas id="normals-canvas"></canvas>
+    <h3>Diffuse Texture</h3>    
+    <canvas id="diffuse-canvas"></canvas>
     <script src="../common/conversion.js"></script>
 	<script src="index.js"></script>
 </body>

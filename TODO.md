@@ -37,6 +37,7 @@
     - Tools
       - https://www.codeandweb.com/spriteilluminator
   - [ ] 2) Describe normal map generation from photos
+    - [ ] Might be good to show that inputing synthetic images will output the equivalent of synthetically generated normals maps (I suspect my formulae for calculating the normals from photos was linear when it needed to the cosin)
     - [ ] Mention simplified method for just creating a 2d normal map. Tiling being one of the more difficult parts. 
     - [ ] Explain alternate techniques like the relighting Sylvia demo: http://www.romancortes.com/ficheros/relighting-sylvia.html
      - [ ] Credit where credit's due: http://www.pauldebevec.com/
