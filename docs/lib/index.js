@@ -374,7 +374,7 @@ function getParameterByName(name, url) {
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
-const textures = ['statue', 'couple', 'head', 'earth', 'me', 'cereal', 'bricks', 'suit', 'reference'];
+const textures = ['statue', 'couple', 'head', 'earth', 'me', 'cereal', 'bricks', 'suit', 'reference', 'shoes'];
 let currentTexture;
 let texture = getParameterByName('texture');
 
