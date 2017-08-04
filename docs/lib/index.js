@@ -374,7 +374,7 @@ function getParameterByName(name, url) {
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
-const textures = ['statue', 'couple', 'head', 'earth', 'me', 'cereal', 'bricks', 'suit', 'reference', 'shoes'];
+const textures = ['statue', 'couple', 'head', 'earth', 'me', 'cereal', 'bricks', 'suit', 'reference', 'shoes', 'jibo', 'jibo2', 'jibo3'];
 let currentTexture;
 let texture = getParameterByName('texture');
 
@@ -531,7 +531,7 @@ function init() {
     imgNormals.onerror = function () {
         alert("failed to load normalmap texture.");
     };
-    //  Set the img srcs AFTER the callbacks are assigned!    
+    //  Set the img srcs AFTER the callbacks are assigned!
 
     imgDiffuse.src = `texture/${currentTexture}-diffuse.png`;
     imgNormals.src = `texture/${currentTexture}-normals.png`;
@@ -636,7 +636,7 @@ function doCursorMove(x, y, reverseZ) {
         dx = x - canvas.width / 2.0,
         dy = -(y - canvas.height / 2.0),
 
-    // Pretend the mouse is intersecting a sphere, it's height would be 
+    // Pretend the mouse is intersecting a sphere, it's height would be
     // where the mouse intersects the sphere
     distance2D = Math.sqrt(dx * dx + dy * dy);
 
@@ -647,7 +647,7 @@ function doCursorMove(x, y, reverseZ) {
 
     var len = Math.sqrt(dx * dx + dy * dy + dz * dz);
     /*,
-    dz = 
+    dz =
     len = */
     if (len > 0.0) {
         // normalize xy
