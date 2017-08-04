@@ -21,7 +21,7 @@
         span.innerHTML = `<h1>${imageName}</h1><canvas id="${imageName}"></canvas>`;
 
         image[imageName] = document.createElement('img');
-        image[imageName].src = `images/${imageName}.jpg`;
+        image[imageName].src = `images/jibo/${imageName}.jpg`;
 
         image[imageName].onload = () => {
             canvas[imageName].width = image[imageName].width;
@@ -66,7 +66,7 @@
     });
 
     function greyScaleAndEnhance(imageName){
-        // 
+        //
         const context = ctx[imageName];
         const img = image[imageName];
         const imageData = context.getImageData(0, 0, img.width, img.height);
@@ -106,7 +106,7 @@
 
                 // It's gray scale, so just grab the first channel's value
                 let channel = data[pixelOffset + 0];
-                let scaledChannel = Math.floor( ( channel - min ) / ( max - min ) * 255.0 ); 
+                let scaledChannel = Math.floor( ( channel - min ) / ( max - min ) * 255.0 );
 
                 data[pixelOffset + 0]   = scaledChannel;
                 data[pixelOffset + 1]   = scaledChannel;
@@ -127,7 +127,7 @@
             const imageData = ctx[imageName].getImageData(0, 0, image[imageName].width, image[imageName].height);
             data[imageName] = imageData.data;
         });
-        
+
         normalsCanvas.width = image['diffuse'].width;
         normalsCanvas.height = image['diffuse'].height;
         let normalsData = normalsCtx.getImageData(0, 0, normalsCanvas.width, normalsCanvas.height);
@@ -168,4 +168,3 @@
         downloadLink.href = event.target.toDataURL('image/png');
     })
 })();
-

@@ -19,8 +19,9 @@ const textures = [
         'me',
         'cereal',
         'bricks',
-        'suit',     
-        'reference'     
+        'suit',
+        'reference',
+        'jibo'
     ];
 let currentTexture;
 let texture = getParameterByName('texture');
