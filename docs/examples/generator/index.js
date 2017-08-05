@@ -21,7 +21,7 @@
         span.innerHTML = `<h1>${imageName}</h1><canvas id="${imageName}"></canvas>`;
 
         image[imageName] = document.createElement('img');
-        image[imageName].src = `images/jibo/${imageName}.jpg`;
+        image[imageName].src = `images/shoes/${imageName}.jpg`;
 
         image[imageName].onload = () => {
             canvas[imageName].width = image[imageName].width;
@@ -74,6 +74,7 @@
 
         let min = 255;
         let max = 0;
+        let minChannelValue = 16;
 
         // Convert to grey scale and remember the highest and lowest channel value;
         for(let y = 0; y<img.height; y++){
@@ -81,6 +82,10 @@
                 const pixelOffset = (y * img.width + x) * 4;
 
                 let maxChannel = Math.max( Math.max( data[pixelOffset + 0], data[pixelOffset + 1]), data[pixelOffset + 2] );
+
+                if(maxChannel < minChannelValue){
+                    maxChannel = 0;
+                }
 
                 data[pixelOffset + 0]   = maxChannel;
                 data[pixelOffset + 1]   = maxChannel;
