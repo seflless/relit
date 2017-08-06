@@ -72,7 +72,35 @@ void main()
 }
 `;
 
+function compileShader( gl, sh, src ) {
+    gl.shaderSource(sh, src);
+    gl.compileShader(sh);
+
+    if( !gl.getShaderParameter(sh, gl.COMPILE_STATUS) )
+    {
+        console.error( gl.getShaderInfoLog(sh) );
+        return null;
+    }
+
+    return sh;
+}
+
+function makeShaderProgram ( gl, vshader, fshader ) {
+    let prog = gl.createProgram();
+    gl.attachShader(prog, vshader);
+    gl.attachShader(prog, fshader);
+    gl.linkProgram(prog);
+    if( !gl.getProgramParameter(prog, gl.LINK_STATUS) )
+    {
+        console.error("Failed to link shader program:", gl.getProgramInfoLog(prog));
+        return null;
+    }
+    return prog;
+}
+
 module.exports = {
     vertexShaderSource,
-    fragmentShaderSource
+    fragmentShaderSource,
+    compileShader,
+    makeShaderProgram
 }

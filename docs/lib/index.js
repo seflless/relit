@@ -15,6 +15,215 @@ module.exports = {
 };
 
 },{}],2:[function(require,module,exports){
+let { Quad } = require('./Quad');
+let { Sprite } = require('./Sprite');
+let { SpriteBatch } = require('./SpriteBatch');
+let {
+    vertexShaderSource,
+    fragmentShaderSource,
+    compileShader,
+    makeShaderProgram
+} = require('./Shaders');
+
+class Relight {
+    static create(options) {
+        let relight = new Relight(options);
+
+        return relight._initialize();
+    }
+
+    constructor(options) {
+        this.options = options;
+
+        this.lightDirection = new Float32Array([this.options.lightDirection[0], this.options.lightDirection[1], this.options.lightDirection[2]]);
+
+        this.lightColor = new Float32Array([this.options.lightColor[0] / 255.0, this.options.lightColor[1] / 255.0, this.options.lightColor[2] / 255.0]);
+        this.ambientColor = new Float32Array([this.options.ambientColor[0] / 255.0, this.options.ambientColor[1] / 255.0, this.options.ambientColor[2] / 255.0]);
+    }
+
+    _initialize() {
+        return new Promise(resolve => {
+            let gl = null; // The WebGL object
+            let canvas = null; // The canvas element
+            let shader = { // Structure to hold shader stuff
+                prog: null, attribs: null, uniforms: null
+            };
+            let texDiffuse = null; // diffuse texture
+            let texNormals = null; // normal map texture
+            let numTexturesLoaded = 0; // counts # of textures loaded so we know when we're ready
+            let batch = null; // will be an instance of SpriteBatch class
+            let monkeys = []; // will be an array of monkey sprites to render
+            let prevT = 0; // previous frame timestamp (millisecs)
+
+            this.canvas = document.createElement('canvas');
+            this.canvas.width = 800;
+            this.canvas.height = 800;
+
+            this.options.container.appendChild(this.canvas);
+
+            // Init WebGL...
+            if (gl = this.canvas.getContext("webgl")) console.log("webgl context acquired");else if (gl = this.canvas.getContext("experimental-webgl")) console.log("experimental-webgl context acquired");else {
+                console.error("Failed to acquire a WebGL context");
+                alert("WebGL not available.");
+                return;
+            }
+
+            this.gl = gl;
+
+            // Compile shader scripts...
+            const vertexShader = compileShader(gl, gl.createShader(gl.VERTEX_SHADER), vertexShaderSource);
+            const fragmentShader = compileShader(gl, gl.createShader(gl.FRAGMENT_SHADER), fragmentShaderSource);
+            if (!(shader.prog = makeShaderProgram(gl, vertexShader, fragmentShader))) {
+                alert("Failed to create shader program. Check console for errors.");
+                return;
+            }
+
+            //  Activate the shader program
+            gl.useProgram(shader.prog);
+
+            //  Acquire shader attribs
+            shader.attribs = {
+                pos: gl.getAttribLocation(shader.prog, "aPosition"),
+                rot: gl.getAttribLocation(shader.prog, "aRotation"),
+                uv: gl.getAttribLocation(shader.prog, "aTexCoord")
+            };
+
+            //  Acquire shader uniforms
+            shader.uniforms = {
+                sceneWidth: gl.getUniformLocation(shader.prog, "uSceneWidth"),
+                sceneHeight: gl.getUniformLocation(shader.prog, "uSceneHeight"),
+                aspect: gl.getUniformLocation(shader.prog, "uAspect"),
+                samplerD: gl.getUniformLocation(shader.prog, "uSamplerD"),
+                samplerN: gl.getUniformLocation(shader.prog, "uSamplerN"),
+                lightDir: gl.getUniformLocation(shader.prog, "uLightDir"),
+                lightColor: gl.getUniformLocation(shader.prog, "uLightColor"),
+                ambientColor: gl.getUniformLocation(shader.prog, "uAmbientColor")
+            };
+
+            // Start loading textures...
+            texDiffuse = gl.createTexture();
+            texNormals = gl.createTexture();
+            let imgDiffuse = new Image();
+            let imgNormals = new Image();
+            imgDiffuse.onload = function () {
+                onLoadedTexture(texDiffuse, imgDiffuse, gl.RGBA);
+            };
+            imgDiffuse.onerror = function () {
+                alert("failed to load diffuse texture.");
+            };
+            imgNormals.onload = function () {
+                onLoadedTexture(texNormals, imgNormals, gl.RGB);
+            };
+            imgNormals.onerror = function () {
+                alert("failed to load normalmap texture.");
+            };
+            //  Set the img srcs AFTER the callbacks are assigned!
+
+            imgDiffuse.src = `texture/${currentTexture}-diffuse.png`;
+            imgNormals.src = `texture/${currentTexture}-normals.png`;
+            //  Exiting for now. Execution resumes in onLoadedTexture when textures load.
+
+            /**
+             *  Callback on texture image load
+             */
+            let onLoadedTexture = (tex, img, fmt) => {
+                gl.bindTexture(gl.TEXTURE_2D, tex);
+                //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); // required if no mipmaps?
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR); // gl.LINEAR for smooth texture scaling
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+                gl.texImage2D(gl.TEXTURE_2D, 0, fmt, fmt, gl.UNSIGNED_BYTE, img);
+                ++numTexturesLoaded;
+                if (numTexturesLoaded >= 2) {
+                    //  Final texture has loaded. Start er up!
+                    this.canvas.width = img.width;
+                    this.canvas.height = img.height;
+                    startRenderLoop();
+                }
+            };
+
+            /**
+             *  Called when inits are successful and all assets have loaded
+             */
+            let startRenderLoop = () => {
+                gl.disable(gl.CULL_FACE);
+                gl.disable(gl.DEPTH_TEST);
+                gl.enable(gl.BLEND);
+                gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+                //gl.clearColor(0.0, 0.0, 0.0, 0.0);
+                gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+
+                //  Create a SpriteBatch
+                batch = new SpriteBatch({
+                    lightDir: this.lightDirection,
+                    lightColor: this.lightColor,
+                    ambientColor: this.ambientColor,
+                    gl,
+                    canvas: this.canvas,
+                    bufsize: 240, // Number of sprites to allocate for
+                    shader: shader,
+                    texture: texDiffuse,
+                    normap: texNormals
+                });
+
+                let quad = new Quad({});
+                let monkey, sprite;
+                let x, y;
+
+                //  Fill an array of monkeys, each with its own sprite instance
+                monkeys = [];
+
+                // Add a sprite to the batch
+                sprite = new Sprite({
+                    x: 0, y: 0, rot: 0,
+                    quad: quad
+                });
+                batch.addSprite(sprite);
+
+                // Make an ad-hoc monkey object
+                monkey = {
+                    sprite: sprite,
+                    rotVel: 0 //Math.random() * 4.0 - 2.0  // random rotational velocity
+                };
+                monkeys.push(monkey);
+
+                //  Init the previous frame time
+                prevT = Date.now();
+
+                //  All inits and setup done! Start the animation loop..
+                requestAnimationFrame(doFrame);
+
+                resolve(this);
+            };
+
+            /**
+             *  Render loop callback function
+             */
+            let doFrame = () => {
+                let curT = Date.now();
+                let dt = curT - prevT;
+                if (dt > 100) dt = 100; // sanity check - in case of extra long pause or sleep
+                render();
+                prevT = curT; // remember timestamp for next frame
+                requestAnimationFrame(doFrame);
+            };
+
+            /**
+             *  Render everything - the SpriteBatch does all the work for us.
+             */
+            let render = () => {
+                batch.render();
+            };
+        });
+    }
+}
+
+module.exports = {
+    Relight
+};
+
+},{"./Quad":1,"./Shaders":3,"./Sprite":4,"./SpriteBatch":5}],3:[function(require,module,exports){
 const vertexShaderSource = `
 //  Textured, lit, normal mapped vert shader
 precision mediump float;
@@ -89,12 +298,38 @@ void main()
 }
 `;
 
+function compileShader(gl, sh, src) {
+    gl.shaderSource(sh, src);
+    gl.compileShader(sh);
+
+    if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
+        console.error(gl.getShaderInfoLog(sh));
+        return null;
+    }
+
+    return sh;
+}
+
+function makeShaderProgram(gl, vshader, fshader) {
+    let prog = gl.createProgram();
+    gl.attachShader(prog, vshader);
+    gl.attachShader(prog, fshader);
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+        console.error("Failed to link shader program:", gl.getProgramInfoLog(prog));
+        return null;
+    }
+    return prog;
+}
+
 module.exports = {
     vertexShaderSource,
-    fragmentShaderSource
+    fragmentShaderSource,
+    compileShader,
+    makeShaderProgram
 };
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 /**
  *  Sprite class
  *  An instance to be displayed on the screen.
@@ -110,7 +345,7 @@ module.exports = {
   Sprite
 };
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 /**
  *  Batch renderer class for normal-mapped sprites (quads)
  *  Allows individual position, rotation for each.
@@ -120,6 +355,7 @@ module.exports = {
 let SpriteBatch = function (info) {
 	this.lightDir = info.lightDir;
 	this.gl = info.gl;
+	this.canvas = info.canvas;
 	this.bufsize = info.bufsize || 16; // Number of sprites to allocate for
 	this.shader = info.shader; // The shader to use for this layer
 	this.texture = info.texture || null; // Texture
@@ -177,14 +413,14 @@ let SpriteBatch = function (info) {
 	const height = 1.0;
 	this.gl.uniform1f(this.shader.uniforms.sceneWidth, width);
 	this.gl.uniform1f(this.shader.uniforms.sceneHeight, height);
-	this.gl.uniform1f(this.shader.uniforms.aspect, canvas.width / canvas.height);
+	this.gl.uniform1f(this.shader.uniforms.aspect, this.canvas.width / this.canvas.height);
 	this.gl.uniform3fv(this.shader.uniforms.lightDir, this.lightDir);
 
 	const ambient = 0.2;
 	const light = 1.0;
-	this.gl.uniform3fv(this.shader.uniforms.lightColor, new Float32Array([light, light, light]));
+	this.gl.uniform3fv(this.shader.uniforms.lightColor, info.lightColor);
 
-	this.gl.uniform3fv(this.shader.uniforms.ambientColor, new Float32Array([0, 0, ambient]));
+	this.gl.uniform3fv(this.shader.uniforms.ambientColor, info.ambientColor);
 
 	var e = this.gl.getError();
 	if (e !== this.gl.NO_ERROR) console.error("GL error: " + e);
@@ -342,371 +578,17 @@ module.exports = {
 	SpriteBatch
 };
 
-},{}],5:[function(require,module,exports){
-let { vertexShaderSource, fragmentShaderSource } = require('./Shaders');
-let { Quad } = require('./Quad');
-let { Sprite } = require('./Sprite');
-let { SpriteBatch } = require('./SpriteBatch');
-
-function create(options) {
-    //
-    //  App Globals
-    //
-    var gl = null; // The WebGL object
-    var canvas = null; // The canvas element
-    var canvasPos = { x: 0, y: 0 }; // Top left of canvas
-    var shader = { // Structure to hold shader stuff
-        prog: null, attribs: null, uniforms: null
-    };
-    var texDiffuse = null; // diffuse texture
-    var texNormals = null; // normal map texture
-    var numTexturesLoaded = 0; // counts # of textures loaded so we know when we're ready
-    var batch = null; // will be an instance of SpriteBatch class
-    var monkeys = []; // will be an array of monkey sprites to render
-    var prevT = 0; // previous frame timestamp (millisecs)
-    var lightDir = new Float32Array([0.7, 0.7, 0.7]); // direction of light (update by mouse movements)
-
-
-    //
-    //  Utility/helper functions
-    //
-    function El(id) {
-        return document.getElementById(id);
-    }
-
-    // Cross-browser requestAnimationFrame
-    window.requestAnimFrame = function () {
-        return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function ( /* function FrameRequestCallback */callback, /* DOMElement Element */element) {
-            window.setTimeout(callback, 1000 / 60);
-        };
-    }();
-
-    function compileShader(sh, src) {
-        gl.shaderSource(sh, src);
-        gl.compileShader(sh);
-
-        if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
-            console.error(gl.getShaderInfoLog(sh));
-            return null;
-        }
-
-        return sh;
-    }
-
-    /*
-    * {src} Source code of the shader.
-    * {shaderType} Enumeration of either 'VertexShader' or 'FragmentShader'
-    */
-    function createShader(src, shaderType) {
-        var shaderScript = El(id);
-        if (!shaderScript) return null;
-
-        var str = "";
-        var k = shaderScript.firstChild;
-        while (k) {
-            if (k.nodeType === 3) str += k.textContent;
-            k = k.nextSibling;
-        }
-
-        var sh;
-        if (shaderScript.type === "x-shader/x-fragment") sh = gl.createShader(gl.FRAGMENT_SHADER);else if (shaderScript.type === "x-shader/x-vertex") sh = gl.createShader(gl.VERTEX_SHADER);else return null;
-
-        return compileShader(sh, str);
-    }
-
-    function makeShaderProgram(vshader, fshader) {
-        var prog = gl.createProgram();
-        gl.attachShader(prog, vshader);
-        gl.attachShader(prog, fshader);
-        gl.linkProgram(prog);
-        if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-            console.error("Failed to link shader program:", gl.getProgramInfoLog(prog));
-            return null;
-        }
-        return prog;
-    }
-
-    ///////////////////////////////////////////////////////////
-    /**
-     *  Bootup function - Called after page loads
-     *  Inits WebGL, shaders, starts textures loading.
-     */
-    function init() {
-        if (gl) return; // already init'ed
-
-        if (!(canvas = El('canvas'))) {
-            alert("canvas element not found in page!");
-            return;
-        }
-
-        // Init WebGL...
-        if (gl = canvas.getContext("webgl")) console.log("webgl context acquired");else if (gl = canvas.getContext("experimental-webgl")) console.log("experimental-webgl context acquired");else {
-            console.error("Failed to acquire a WebGL context");
-            alert("WebGL not available.");
-            return;
-        }
-
-        var rc = canvas.getBoundingClientRect();
-        canvasPos.x = rc.left;
-        canvasPos.y = rc.top;
-
-        // Compile shader scripts...
-        const vertexShader = compileShader(gl.createShader(gl.VERTEX_SHADER), vertexShaderSource);
-        const fragmentShader = compileShader(gl.createShader(gl.FRAGMENT_SHADER), fragmentShaderSource);
-        if (!(shader.prog = makeShaderProgram(vertexShader, fragmentShader))) {
-            alert("Failed to create shader program. Check console for errors.");
-            return;
-        }
-
-        //  Activate the shader program
-        gl.useProgram(shader.prog);
-
-        //  Acquire shader attribs
-        shader.attribs = {
-            pos: gl.getAttribLocation(shader.prog, "aPosition"),
-            rot: gl.getAttribLocation(shader.prog, "aRotation"),
-            uv: gl.getAttribLocation(shader.prog, "aTexCoord")
-        };
-
-        //  Acquire shader uniforms
-        shader.uniforms = {
-            sceneWidth: gl.getUniformLocation(shader.prog, "uSceneWidth"),
-            sceneHeight: gl.getUniformLocation(shader.prog, "uSceneHeight"),
-            aspect: gl.getUniformLocation(shader.prog, "uAspect"),
-            samplerD: gl.getUniformLocation(shader.prog, "uSamplerD"),
-            samplerN: gl.getUniformLocation(shader.prog, "uSamplerN"),
-            lightDir: gl.getUniformLocation(shader.prog, "uLightDir"),
-            lightColor: gl.getUniformLocation(shader.prog, "uLightColor"),
-            ambientColor: gl.getUniformLocation(shader.prog, "uAmbientColor")
-        };
-
-        // Start loading textures...
-        texDiffuse = gl.createTexture();
-        texNormals = gl.createTexture();
-        var imgDiffuse = new Image();
-        var imgNormals = new Image();
-        imgDiffuse.onload = function () {
-            onLoadedTexture(texDiffuse, imgDiffuse, gl.RGBA);
-        };
-        imgDiffuse.onerror = function () {
-            alert("failed to load diffuse texture.");
-        };
-        imgNormals.onload = function () {
-            onLoadedTexture(texNormals, imgNormals, gl.RGB);
-        };
-        imgNormals.onerror = function () {
-            alert("failed to load normalmap texture.");
-        };
-        //  Set the img srcs AFTER the callbacks are assigned!    
-
-        imgDiffuse.src = `texture/${currentTexture}-diffuse.png`;
-        imgNormals.src = `texture/${currentTexture}-normals.png`;
-        //  Exiting for now. Execution resumes in onLoadedTexture when textures load.
-    }
-
-    /**
-     *  Callback on texture image load
-     */
-    function onLoadedTexture(tex, img, fmt) {
-        gl.bindTexture(gl.TEXTURE_2D, tex);
-        //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); // required if no mipmaps?
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR); // gl.LINEAR for smooth texture scaling
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.texImage2D(gl.TEXTURE_2D, 0, fmt, fmt, gl.UNSIGNED_BYTE, img);
-        ++numTexturesLoaded;
-        if (numTexturesLoaded >= 2) {
-            //  Final texture has loaded. Start er up!
-            startApp();
-        }
-    }
-
-    /**
-     *  Called when inits are successful and all assets have loaded
-     */
-    function startApp() {
-        gl.disable(gl.CULL_FACE);
-        gl.disable(gl.DEPTH_TEST);
-        gl.enable(gl.BLEND);
-        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-        //gl.clearColor(0.0, 0.0, 0.0, 0.0);
-        gl.viewport(0, 0, canvas.width, canvas.height);
-
-        //  Create a SpriteBatch
-        batch = new SpriteBatch({
-            lightDir,
-            gl,
-            bufsize: 240, // Number of sprites to allocate for
-            shader: shader,
-            texture: texDiffuse,
-            normap: texNormals
-        });
-
-        var quad = new Quad({});
-        var monkey, sprite;
-        var x, y;
-
-        //  Fill an array of monkeys, each with its own sprite instance
-        monkeys = [];
-
-        // Add a sprite to the batch
-        sprite = new Sprite({
-            x: 0, y: 0, rot: 0,
-            quad: quad
-        });
-        batch.addSprite(sprite);
-
-        // Make an ad-hoc monkey object
-        monkey = {
-            sprite: sprite,
-            rotVel: 0 //Math.random() * 4.0 - 2.0  // random rotational velocity
-        };
-        monkeys.push(monkey);
-
-        //  Watch for mouse/finger movement
-        canvas.addEventListener('mousemove', function (e) {
-            doCursorMove(e.clientX - canvasPos.x, e.clientY - canvasPos.y, e.buttons === 1);
-            e.preventDefault();
-        });
-        canvas.addEventListener('mouseup', function (e) {
-            doCursorMove(e.clientX - canvasPos.x, e.clientY - canvasPos.y, e.buttons === 1);
-            e.preventDefault();
-        });
-        canvas.addEventListener('mousedown', function (e) {
-            doCursorMove(e.clientX - canvasPos.x, e.clientY - canvasPos.y, e.buttons === 1);
-            e.preventDefault();
-        });
-        canvas.addEventListener('touchmove', function (e) {
-            doCursorMove(e.changedTouches[0].clientX - canvasPos.x, e.changedTouches[0].clientY - canvasPos.y);
-            e.preventDefault();
-        });
-        canvas.addEventListener('touchstart', function (e) {
-            doCursorMove(e.changedTouches[0].clientX - canvasPos.x, e.changedTouches[0].clientY - canvasPos.y);
-            e.preventDefault();
-        });
-
-        //  Init the previous frame time
-        prevT = Date.now();
-
-        //  All inits and setup done! Start the animation loop..
-        requestAnimFrame(doFrame);
-    }
-
-    /**
-     *  Mouse move handler.
-     *  Set light direction based on mouse position
-     */
-    function doCursorMove(x, y, reverseZ) {
-        var radius = canvas.width / 2.0,
-            dx = x - canvas.width / 2.0,
-            dy = -(y - canvas.height / 2.0),
-
-        // Pretend the mouse is intersecting a sphere, it's height would be 
-        // where the mouse intersects the sphere
-        distance2D = Math.sqrt(dx * dx + dy * dy);
-
-        if (distance2D > radius) {
-            distance2D = radius;
-        }
-        var dz = Math.sin(Math.PI / 2.0 * (radius - distance2D) / radius) * radius;
-
-        var len = Math.sqrt(dx * dx + dy * dy + dz * dz);
-        /*,
-        dz = 
-        len = */
-        if (len > 0.0) {
-            // normalize xy
-            var s = 1.0 / len;
-            dx *= s;
-            dy *= s;
-            dz *= s;
-        } else {
-            dx = 1.0;
-            dy = 0.0;
-            dz = 0.0;
-        }
-        lightDir[0] = dx;
-        lightDir[1] = dy;
-        lightDir[2] = reverseZ ? -dz : dz;
-    }
-
-    /**
-     *  Render loop callback function
-     */
-    function doFrame() {
-        var curT = Date.now();
-        var dt = curT - prevT;
-        if (dt > 100) dt = 100; // sanity check - in case of extra long pause or sleep
-        update(dt);
-        render();
-        prevT = curT; // remember timestamp for next frame
-        requestAnimFrame(doFrame);
-    }
-
-    /**
-     *  Render everything - the SpriteBatch does all the work for us.
-     */
-    function render() {
-        batch.render();
-
-        // Draw light direction arrow. Based off of this approach
-        // https://stackoverflow.com/a/6333775
-        const length = lightDirectionCanvas.width / 2;
-        const toX = lightDirectionCanvas.width / 2;
-        const toY = lightDirectionCanvas.height / 2;
-        const fromX = toX + lightDir[0] * length;
-        const fromY = toY - lightDir[1] * length;
-        const deltaX = toX - fromX;
-        const deltaY = toY - fromY;
-        const lineLength = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-        const arrowHeadLength = Math.min(10, lineLength);
-        const angle = Math.atan2(toY - fromY, toX - fromX);
-
-        lightDirectionCtx.clearRect(0, 0, lightDirectionCanvas.width, lightDirectionCanvas.height);
-
-        lightDirectionCtx.strokeStyle = "rgba( 255, 255, 255, 0.8 )";
-        lightDirectionCtx.lineWidth = 2;
-        lightDirectionCtx.beginPath();
-        lightDirectionCtx.moveTo(fromX, fromY);
-        lightDirectionCtx.lineTo(toX, toY);
-        lightDirectionCtx.lineTo(toX - arrowHeadLength * Math.cos(angle - Math.PI / 6), toY - arrowHeadLength * Math.sin(angle - Math.PI / 6));
-        lightDirectionCtx.moveTo(toX, toY);
-        lightDirectionCtx.lineTo(toX - arrowHeadLength * Math.cos(angle + Math.PI / 6), toY - arrowHeadLength * Math.sin(angle + Math.PI / 6));
-        lightDirectionCtx.stroke();
-    }
-
-    function drawCircle(centerX, centerY, radius) {
-        lightDirectionCtx.clearRect(0, 0, lightDirectionCanvas.width, lightDirectionCanvas.height);
-        lightDirectionCtx.beginPath();
-        lightDirectionCtx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
-        lightDirectionCtx.fillStyle = 'white';
-        lightDirectionCtx.fill();
-    }
-
-    /**
-     *  Update logic by elapsed time
-     */
-    function update(dt) {
-        var ft = dt * 0.001; // convert delta T to seconds
-        var monkey,
-            i,
-            n = monkeys.length;
-        // update each monkey
-        for (i = 0; i < n; ++i) {
-            monkey = monkeys[i];
-            // spin the monkey using its own rotational velocity
-            monkey.sprite.rot += ft * monkey.rotVel;
-        }
-    }
-
-    init();
-}
+},{}],6:[function(require,module,exports){
+const { Relight } = require('./Relight');
 
 module.exports = {
-    create() {}
+    Relight
 };
 
-},{"./Quad":1,"./Shaders":2,"./Sprite":3,"./SpriteBatch":4}]},{},[5])(5)
+if (window) {
+    window.Relight = Relight;
+}
+
+},{"./Relight":2}]},{},[6])(6)
 });
 //# sourceMappingURL=index.js.map

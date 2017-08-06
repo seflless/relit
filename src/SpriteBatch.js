@@ -8,6 +8,7 @@ let SpriteBatch = function( info )
 {
 	this.lightDir = info.lightDir;
 	this.gl = info.gl;
+	this.canvas = info.canvas;
 	this.bufsize = info.bufsize || 16;		// Number of sprites to allocate for
 	this.shader = info.shader;				// The shader to use for this layer
 	this.texture = info.texture || null;	// Texture
@@ -66,16 +67,16 @@ let SpriteBatch = function( info )
 	const height = 1.0;
 	this.gl.uniform1f(this.shader.uniforms.sceneWidth, width);
 	this.gl.uniform1f(this.shader.uniforms.sceneHeight, height);
-	this.gl.uniform1f(this.shader.uniforms.aspect, canvas.width / canvas.height);
+	this.gl.uniform1f(this.shader.uniforms.aspect, this.canvas.width / this.canvas.height);
 	this.gl.uniform3fv(this.shader.uniforms.lightDir, this.lightDir);
-	
-	
+
+
 	const ambient = 0.2;
 	const light = 1.0;
-	this.gl.uniform3fv(this.shader.uniforms.lightColor, new Float32Array([ light, light, light ]));
-	
-	
-	this.gl.uniform3fv(this.shader.uniforms.ambientColor, new Float32Array([ 0, 0, ambient ]));
+	this.gl.uniform3fv(this.shader.uniforms.lightColor, info.lightColor);
+
+
+	this.gl.uniform3fv(this.shader.uniforms.ambientColor, info.ambientColor);
 
 	var e = this.gl.getError();
 	if( e !== this.gl.NO_ERROR )
