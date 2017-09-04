@@ -12,14 +12,17 @@ Relight Photos & Images Using Normal Maps.
 ### Usage
 
 #### 1) Installation
-
-        npm install --save relit
-    or
-
-        yarn add relit
-    or
-
-        <script src="http://francoislaberge.com/relit/lib/index.js" type="text/javascript"></script>
+```bash
+npm install --save relit
+```
+or
+```bash
+yarn add relit
+```
+or
+```html
+<script src="http://francoislaberge.com/relit/lib/index.js" type="text/javascript"></script>
+```
 #### 2) Include Module
 Get a reference to the module first via either of these methods:
 ```js
