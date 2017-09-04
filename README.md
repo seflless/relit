@@ -28,7 +28,7 @@ Get a reference to the module first via either of these methods:
 ```js
 const relit = require('relit');
 ```
-    or
+or
 ```html
 <script src="http://francoislaberge.com/relit/lib/index.js" type="text/javascript"></script>
 <script>
