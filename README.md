@@ -11,7 +11,7 @@ Relight Photos & Images Using Normal Maps.
 
 ### Usage
 
- 1. Installation
+#### 1) Installation
 
         npm install --save relit
     or
@@ -20,42 +20,47 @@ Relight Photos & Images Using Normal Maps.
     or
 
         <script src="http://francoislaberge.com/relit/lib/index.js" type="text/javascript"></script>
- 1. Get a reference to the module first via either of these methods:
-
-        const relit = require('relit');
+#### 2) Include Module
+Get a reference to the module first via either of these methods:
+```js
+const relit = require('relit');
+```
     or
-
-        <script src="http://francoislaberge.com/relit/lib/index.js" type="text/javascript"></script>
-        <script>
-            // relit is now attached to the window object, making it a global.
-        </script>
+```html
+<script src="http://francoislaberge.com/relit/lib/index.js" type="text/javascript"></script>
+<script>
+    // relit is now attached to the window object, making it a global.
+</script>
+```
     **Note (for above method)**: It's better to download the file and serve it from your own server
- 1. Create an instance inside a specified container DOM element.
+#### 3) Create Instance
+Create an instance inside a specified container DOM element.
+```js
+relit.create({
+    container: document.body,
+    diffuseTexture: "diffuse.png",
+    normalsTexture: "normals.png",
 
-        relit.create({
-            container: document.body,
-            diffuseTexture: "diffuse.png",
-            normalsTexture: "normals.png",
+    // The following are all optional
+    width: 128,                         // Width / Height of canvas element
+    height: 128,                        // Default is to use the diffuse textures dimensions
 
-            // The following are all optional
-            width: 128,                         // Width / Height of canvas element
-            height: 128,                        // Default is to use the diffuse textures dimensions
+    lightDirection: [ 1.0, 0.0, 0.0 ],  // The initial light direction.
+                                        // Default is [ 0, 0, 1 ]                       
 
-            lightDirection: [ 1.0, 0.0, 0.0 ],  // The initial light direction.
-                                                // Default is [ 0, 0, 1 ]                       
+    lightColor: [ 191, 191, 191],       // The initial directional light color.
+                                        // Default is [ 255, 255, 255 ]
 
-            lightColor: [ 191, 191, 191],       // The initial directional light color.
-                                                // Default is [ 255, 255, 255 ]
+    ambientColor: [0, 0, 64],           // The color of the ambient light.
+                                        // Default is black [ 0, 0, 0 ]
+})
+.then( (relight) => {
 
-            ambientColor: [0, 0, 64],           // The color of the ambient light.
-                                                // Default is black [ 0, 0, 0 ]
-        })
-        .then( (relight) => {
-
-        })
-
+})
+```
      **Note** The inserted canvas is not a `display: block` so that it can be embedded in text. Change this via css styling if needed.
- 1. TODO: Finish this.
+
+**TODO: Finish this.**
 
 ### Coordinate Systems
 
