@@ -64,7 +64,7 @@ relit.create({
 
 ### Coordinate Systems
 
-<img src="http://francoislaberge.com/relit/images/coordinate-system.png"/>
+<img src="http://francoislaberge.com/relit/images/webgl-axes.png"/>
 
 ### Contributing
 
