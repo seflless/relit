@@ -35,7 +35,9 @@ or
     // relit is now attached to the window object, making it a global.
 </script>
 ```
-    **Note (for above method)**: It's better to download the file and serve it from your own server
+
+**Note (for above method)**: It's better to download the file and serve it from your own server
+
 #### 3) Create Instance
 Create an instance inside a specified container DOM element.
 ```js
