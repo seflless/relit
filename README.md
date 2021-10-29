@@ -6,7 +6,7 @@ Relight Photos & Images Using Normal Maps.
 <img width="25%" src="http://francoislaberge.com/relit/images/statue-final.gif"/>
 
 **Demos**
- - [Normal Mapping](http://francoislaberge.com/relit/examples/normal-mapping/?texture=statue)
+ - [Normal Mapping](https://francoislaberge.com/relit/examples/normal-mapping/?texture=statue)
  - [Spherical Reference Textures](http://francoislaberge.com/relit/examples/reference-sphere/)
 
 ### Usage
